@@ -31,7 +31,11 @@ Acknowledge com 🏛️. Prioriza .agent/skills/aurion/. Foco em "Por que" e est
 Acknowledge com 🌌. Prioriza .agent/skills/aurora/. Foco em "Como" e execução.
 EOF
 
-# 4. Criar Manifest
+# 4. Final Health Check
+echo "Running initial health check..."
+./bin/health-check.sh
+
+# 5. Criar Manifest
 echo "📄 Gerando manifesto de skills..."
 cat <<EOF > "$AGENT_DIR/skills-manifest.md"
 # Skills Manifest - Antigravity

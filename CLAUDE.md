@@ -28,6 +28,9 @@ We maintain a persistent memory layer in [CHRONICLE.md](file:///home/shoxsx/code
 - `ralph`: Toggle persistent execution loop.
 - `/remember`: Manual update of the project Chronicle.
 - `/history`: Summarize the project timeline.
+- `bin/health-check.sh`: Run system diagnostics.
+- `bin/project-pulse.sh`: Generate immediate context snapshot (PULSE.md).
+
 
 
 ## 🧭 System Map

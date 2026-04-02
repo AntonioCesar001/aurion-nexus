@@ -33,10 +33,9 @@ High-level strategic and management skills.
 - **[design-strategy](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/design-strategy.md)**: Executive design quality and quality gates.
 - **[memory-librarian](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/memory-librarian.md)**: Project memory management (Chronicle).
 
-- **[development-standards](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/development-standards.md)**: Core engineering and architectural principles.
+- **[development-manual](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/development-manual.md)**: Unified engineering and operational manual.
 - **[high-complexity-guide](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/high-complexity-guide.md)**: Strategies for tackling difficult technical problems.
 - **[ideation-guide](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/ideation-guide.md)**: Framework for brainstorming and refining ideas.
-- **[operation-guide](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/operation-guide.md)**: General system operation and agency management.
 - **[paperclip-cycle](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/paperclip-cycle.md)**: Coordination between human and AI squads.
 - **[refinement-workflow](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/refinement-workflow.md)**: Detailed process for feature refinement.
 
