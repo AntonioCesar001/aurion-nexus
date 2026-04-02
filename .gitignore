@@ -1,0 +1,33 @@
+# Secrets & Credentials
+secrets/
+.env
+*.key
+*.pem
+token.json
+openclaw.json
+
+# Projects & Workspaces (User specific data)
+projects/
+temp_*/
+
+# System & OS
+.DS_Store
+Thumbs.db
+node_modules/
+dist/
+build/
+.npm/
+.yarn/
+
+# Antigravity Brain (Local Task Logs)
+.gemini/antigravity/brain/
+task.md
+implementation_plan.md
+walkthrough.md
+
+# Logs & Temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.tmp/
