@@ -1,0 +1,57 @@
+#!/bin/bash
+# 🏛️ Aurion Nexus — Unified Sovereign CLI
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PARENT_DIR="$(dirname "$DIR")"
+
+usage() {
+    echo -e "${BLUE}Aurion Nexus CLI — Sovereign Agentic Control${NC}"
+    echo "Usage: aurion <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  health           Run the health engine diagnostics"
+    echo "  pulse            Generate/refresh the context snapshot (PULSE.md)"
+    echo "  mission <goal>   Initialize an autonomous mission (Ralph loop)"
+    echo "  status           Show the current state of the sovereign core"
+    echo "  setup            Run the initial skills registration"
+    echo "  help             Show this help message"
+}
+
+case "$1" in
+    health)
+        "$DIR/health-check.sh"
+        ;;
+    pulse)
+        "$DIR/project-pulse.sh"
+        ;;
+    mission)
+        if [ -z "$2" ]; then
+            echo -e "${RED}Error: Mission goal required.${NC}"
+            exit 1
+        fi
+        echo -e "${YELLOW}🚀 Initializing Mission: $2${NC}"
+        echo "Consulting Aurion for strategic alignment..."
+        # In a real environment, this would call the agent directly.
+        echo "Mission dispatched to Aurora for execution."
+        ;;
+    status)
+        echo -e "${BLUE}--- Core Status ---${NC}"
+        if [ -f "$PARENT_DIR/CHRONICLE.md" ]; then
+            tail -n 10 "$PARENT_DIR/CHRONICLE.md"
+        else
+            echo "Chronicle not found."
+        fi
+        ;;
+    setup)
+        "$PARENT_DIR/scripts/setup-skills.sh"
+        ;;
+    *)
+        usage
+        ;;
+esac

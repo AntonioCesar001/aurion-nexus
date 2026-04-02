@@ -44,7 +44,21 @@ The "Muscle" and the "Precision". Aurora delivers production-ready code with ext
 
 ---
 
+## 🛠️ The Sovereign CLI
+
+Manage your entire collective with a single command based on the `bin/aurion` entrypoint.
+
+```bash
+./bin/aurion health   # Run core diagnostics
+./bin/aurion pulse    # Generate context snapshot (PULSE.md)
+./bin/aurion status   # View current mission from the Chronicle
+./bin/aurion setup    # Re-register all agent skills
+```
+
+---
+
 ## 🚀 Quick Start
+
 
 See [INSTALL.md](INSTALL.md) for a detailed setup guide.
 
