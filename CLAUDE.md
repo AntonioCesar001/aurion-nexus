@@ -1,43 +1,29 @@
-# 🧊 OpenClaw Aurion: System Identity
+# OpenClaw Aurion — System Identity
 
-This project is a high-performance agentic collective designed for autonomous software development and strategic management.
+Intent-based agentic collective for autonomous software delivery. No commands to memorize — describe the goal, the system assembles the right squad.
 
-## 🧠 Proactive Intelligence
-Aurion Nexus is an **intent-based autonomous ecosystem**. You do not need to remember specific commands or flags.
-- **Intent-Driven**: The system analyzes your request and assembles the specialized squad (Security, TDD, Design) automatically.
-- **Autonomic by Default**: High-performance protocols (Ralph, TDD, ADR) are used for all complex deliveries.
-- **Strategic Alignment**: All actions are governed by [SOUL.md](file:///home/shoxsx/code/openclaw%20Aurion/SOUL.md) and [RULES.md](file:///home/shoxsx/code/openclaw%20Aurion/RULES.md).
+## Governance
+- Soul & principles: [SOUL.md](SOUL.md)
+- Non-negotiable rules: [RULES.md](RULES.md)
+- Project memory: [CHRONICLE.md](CHRONICLE.md) — read before major tasks
 
-## 👥 The Squads
-- **🏛️ Aurion (Strategic)**: Requirements gathering, architecture, and decision-making. Uses Socratic Deep Interviewing and Consensus Building.
-- **🌌 Aurora (Operational)**: High-precision execution, testing, and security. Uses a specialized squad (Architect, Reviewer, QA) and the persistent Ralph loop.
+## Squads
+- **Aurion** (strategic): architecture, requirements, ADR, deep-interview, consensus
+- **Aurora** (operational): Ralph loop, TDD, security, design QA, AI safety
 
-## ⚖️ Governance
-- **Soul of the Project**: [SOUL.md](file:///home/shoxsx/code/openclaw%20Aurion/SOUL.md)
-- **Executive Rules**: [RULES.md](file:///home/shoxsx/code/openclaw%20Aurion/RULES.md)
+## Key Commands
+- `/audit` `/polish` `/tdd` `autopilot` `deep-interview` `ralph` `/remember`
+- `bin/health-check.sh` · `bin/project-pulse.sh` (→ PULSE.md)
 
-## 📜 Project Memory (The Chronicle)
-We maintain a persistent memory layer in [CHRONICLE.md](file:///home/shoxsx/code/openclaw%20Aurion/CHRONICLE.md) to prevent session amnesia. Always consult the Chronicle and the ADR records before starting major tasks.
+## System Map (skills load on-demand — not paid per message)
+- Router: [.agent/skills/router.md](.agent/skills/router.md)
+- All skills: [.agent/skills-manifest.md](.agent/skills-manifest.md)
+- SEIP Strategic (Aurion): [.agent/skills/aurion/seip-strategic-guide.md](.agent/skills/aurion/seip-strategic-guide.md)
+- SEIP Execution (Aurora): [.agent/skills/aurora/seip-execution-guide/SKILL.md](.agent/skills/aurora/seip-execution-guide/SKILL.md)
+- Session protocol: [.agent/skills/aurora/session-protocol/SKILL.md](.agent/skills/aurora/session-protocol/SKILL.md)
 
-## 🛠️ Command Reference
-- `/audit` / `/critique`: Trigger a design or architecture quality review.
-- `/polish`: Refine UI/UX according to Impeccable standards.
-- `/tdd`: Trigger a Test-Driven Development cycle.
-- `autopilot`: Trigger the full autonomous development pipeline.
-- `deep-interview`: Start a Socratic clarification session.
-- `ralph`: Toggle persistent execution loop.
-- `/remember`: Manual update of the project Chronicle.
-- `/history`: Summarize the project timeline.
-- `bin/health-check.sh`: Run system diagnostics.
-- `bin/project-pulse.sh`: Generate immediate context snapshot (PULSE.md).
-
-
-
-## 🧭 System Map
-- **Skills Manifest**: [skills-manifest.md](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills-manifest.md)
-- **Router Rules**: [router.md](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/router.md)
-- **Design Standards**: [aurora/design-standards/SKILL.md](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/design-standards/SKILL.md)
-- **Mission Protocol**: [aurora/mission-protocol.md](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/mission-protocol.md)
-
----
-*Follow the Impeccable Design Standards. No AI Slop. Total Autonomy.*
+## Token Efficiency (always active)
+- Skills load on-demand. Only CLAUDE.md costs tokens on every message.
+- Use `/compact` at 60% context. Use `/clear` between unrelated tasks.
+- Point to specific files/lines — never share entire repos.
+- Prefer single grouped prompts over follow-up chains.
