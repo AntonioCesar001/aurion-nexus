@@ -8,7 +8,17 @@ This manifest lists the specialized skills currently installed and available to 
 ## 🌌 Aurora Operational Skills
 Operational skills for execution, quality, and infrastructure management.
 
-- **[agents](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/agents/)**: Specialized squad (Architect, Reviewer, QA, Debugger, TDD Guide, Security Reviewer, Database).
+- **[agents](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/agents/)**: Specialized squad:
+  - `architect` — Strategic architecture & debugging (READ-ONLY analysis, Opus)
+  - `code-reviewer` — Security and code quality audits
+  - `database-reviewer` — Database optimization and design
+  - `debugger` — Deep issue diagnosis (invoked after 3+ failures)
+  - `performance-optimizer` — Speed and scalability improvements
+  - `qa-tester` — Interactive CLI/E2E testing with tmux
+  - `security-reviewer` — Infrastructure security, OWASP Top 10, secrets detection
+  - `tdd-guide` — Test-Driven Development enforcement
+  - **`ai-safety-reviewer`** *(new)* — LLM/AI security, OWASP LLM Top 10, guardrails, red teaming, AI eval
+  - **`design-qa`** *(new)* — Visual quality, accessibility (axe-core/WCAG), AI Slop detection, visual regression
 - **[mission-protocol](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/mission-protocol.md)**: Standard plan-exec-verify-fix loop (Ralph).
 - **[tdd-workflow](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/tdd-workflow.md)**: Mandatory Test-Driven Development cycle.
 - **[backend-standards](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/backend-standards/SKILL.md)**: Standards for API and database implementation.
@@ -21,6 +31,8 @@ Operational skills for execution, quality, and infrastructure management.
 - **[mcp-health](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/mcp-health/SKILL.md)**: Monitoring and restoring tool/bridge connectivity.
 - **[preflight-gate](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/preflight-gate/SKILL.md)**: Checklists to run before starting any task.
 - **[testing-standards](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/testing-standards/SKILL.md)**: Protocols for API and E2E testing.
+- **[seip-execution-guide](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/seip-execution-guide/SKILL.md)**: SEIP v2 operational reference — maps execution phases to correct repos, tools, and patterns.
+- **[session-protocol](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurora/session-protocol/SKILL.md)**: Token efficiency rules — /clear, /compact, MCP hygiene, model selection, prompt grouping.
 
 ## 🏛️ Aurion Strategic Skills (Blueprints)
 High-level strategic and management skills.
@@ -32,6 +44,7 @@ High-level strategic and management skills.
 - **[deep-interview](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/deep-interview.md)**: Socratic requirement clarification.
 - **[design-strategy](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/design-strategy.md)**: Executive design quality and quality gates.
 - **[memory-librarian](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/memory-librarian.md)**: Project memory management (Chronicle).
+- **[seip-strategic-guide](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/seip-strategic-guide.md)**: SEIP v2 knowledge base for architecture decisions, reference selection, and maturity governance.
 
 - **[development-manual](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/development-manual.md)**: Unified engineering and operational manual.
 - **[high-complexity-guide](file:///home/shoxsx/code/openclaw%20Aurion/.agent/skills/aurion/high-complexity-guide.md)**: Strategies for tackling difficult technical problems.
