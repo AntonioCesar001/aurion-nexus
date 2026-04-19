@@ -12,7 +12,7 @@ from collections.abc import Sequence
 
 from sqlmodel import SQLModel
 
-from alembic import op
+from alembic import op  # type: ignore
 
 # Import all models so metadata is populated
 from wikimind import models  # noqa: F401

@@ -11,7 +11,7 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import SQLModel
 
-from alembic import context
+from alembic import context  # type: ignore
 
 # Import all models so metadata is populated
 from wikimind import models  # noqa: F401

@@ -119,7 +119,7 @@ class TaskType(StrEnum):
 # ---------------------------------------------------------------------------
 
 
-class User(SQLModel, table=True):
+class User(SQLModel, table=True): # type: ignore
     """Authenticated user account."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -132,7 +132,7 @@ class User(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=utcnow_naive)
 
 
-class Source(SQLModel, table=True):
+class Source(SQLModel, table=True): # type: ignore
     """Raw ingested source — before compilation."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -153,7 +153,7 @@ class Source(SQLModel, table=True):
     content_hash: str | None = Field(default=None, index=True)
 
 
-class Article(SQLModel, table=True):
+class Article(SQLModel, table=True): # type: ignore
     """Compiled wiki article metadata. Content lives in .md file."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -182,7 +182,7 @@ class Article(SQLModel, table=True):
     )
 
 
-class ConceptKindDef(SQLModel, table=True):
+class ConceptKindDef(SQLModel, table=True): # type: ignore
     """Registry of concept kinds (Type Object pattern)."""
 
     name: str = Field(primary_key=True)
@@ -192,7 +192,7 @@ class ConceptKindDef(SQLModel, table=True):
     description: str | None = None
 
 
-class Concept(SQLModel, table=True):
+class Concept(SQLModel, table=True): # type: ignore
     """Auto-generated concept taxonomy node."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -204,7 +204,7 @@ class Concept(SQLModel, table=True):
     concept_kind: str = "topic"
 
 
-class Backlink(SQLModel, table=True):
+class Backlink(SQLModel, table=True): # type: ignore
     """Directed link between two wiki articles."""
 
     source_article_id: str = Field(foreign_key="article.id", primary_key=True)
@@ -217,7 +217,7 @@ class Backlink(SQLModel, table=True):
     resolved_by: str | None = None
 
 
-class Conversation(SQLModel, table=True):
+class Conversation(SQLModel, table=True): # type: ignore
     """A conversation thread of one or more Q&A turns.
 
     Conversations group related Q&A turns that share LLM context. The
@@ -239,7 +239,7 @@ class Conversation(SQLModel, table=True):
     forked_at_turn_index: int | None = None
 
 
-class Query(SQLModel, table=True):
+class Query(SQLModel, table=True): # type: ignore
     """Q&A history entry."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -259,7 +259,7 @@ class Query(SQLModel, table=True):
     turn_index: int = 0  # 0 for first turn, 1 for second, etc.
 
 
-class Job(SQLModel, table=True):
+class Job(SQLModel, table=True): # type: ignore
     """Async job record."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -275,7 +275,7 @@ class Job(SQLModel, table=True):
     result_summary: str | None = None
 
 
-class CostLog(SQLModel, table=True):
+class CostLog(SQLModel, table=True): # type: ignore
     """LLM API cost tracking."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -290,7 +290,7 @@ class CostLog(SQLModel, table=True):
     created_at: datetime = Field(default_factory=utcnow_naive)
 
 
-class SyncLog(SQLModel, table=True):
+class SyncLog(SQLModel, table=True): # type: ignore
     """Cloud sync history."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -303,7 +303,7 @@ class SyncLog(SQLModel, table=True):
     error: str | None = None
 
 
-class UserPreference(SQLModel, table=True):
+class UserPreference(SQLModel, table=True): # type: ignore
     """Lightweight key-value store for runtime settings overrides.
 
     Precedence: DB row wins if it exists, otherwise falls back to .env defaults.
@@ -533,7 +533,7 @@ class LintReportStatus(StrEnum):
     FAILED = "failed"
 
 
-class LintReport(SQLModel, table=True):
+class LintReport(SQLModel, table=True): # type: ignore
     """One run of the linter. All findings from a run FK back to this row via report_id."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
@@ -567,7 +567,7 @@ class _LintFindingBase(SQLModel):
     content_hash: str = Field(index=True)
 
 
-class ContradictionFinding(_LintFindingBase, table=True):
+class ContradictionFinding(_LintFindingBase, table=True): # type: ignore
     """A contradiction between key claims of two articles that share a concept."""
 
     kind: LintFindingKind = Field(default=LintFindingKind.CONTRADICTION)
@@ -579,7 +579,7 @@ class ContradictionFinding(_LintFindingBase, table=True):
     shared_concept_id: str | None = Field(default=None, foreign_key="concept.id", index=True)
 
 
-class OrphanFinding(_LintFindingBase, table=True):
+class OrphanFinding(_LintFindingBase, table=True): # type: ignore
     """An article with zero inbound AND zero outbound backlinks."""
 
     kind: LintFindingKind = Field(default=LintFindingKind.ORPHAN)
@@ -587,7 +587,7 @@ class OrphanFinding(_LintFindingBase, table=True):
     article_title: str
 
 
-class StructuralFinding(_LintFindingBase, table=True):
+class StructuralFinding(_LintFindingBase, table=True): # type: ignore
     """A structural integrity violation detected by the backlink enforcer."""
 
     kind: LintFindingKind = Field(default=LintFindingKind.STRUCTURAL)
@@ -597,7 +597,7 @@ class StructuralFinding(_LintFindingBase, table=True):
     detail: str = ""
 
 
-class DismissedFinding(SQLModel, table=True):
+class DismissedFinding(SQLModel, table=True): # type: ignore
     """Cross-run dismiss record — keyed by content hash."""
 
     content_hash: str = Field(primary_key=True)
@@ -616,7 +616,7 @@ class LintReportDetail(BaseModel):
     structurals: list[StructuralFinding] = []
 
 
-class LintPairCache(SQLModel, table=True):
+class LintPairCache(SQLModel, table=True): # type: ignore
     """Cache of LLM contradiction check results for article pairs.
 
     Keyed by sorted article pair IDs. Invalidated when either article's

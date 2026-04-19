@@ -62,7 +62,7 @@ class NexusShield:
         }
 
     def scan(self, payload: str) -> tuple[bool, str, list[dict[str, Any]]]:
-        findings = []
+        findings: list[dict[str, Any]] = []
         safe = True
         reason = "Payload deemed safe."
 
