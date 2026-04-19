@@ -73,3 +73,49 @@ Close the 5 critical gaps identified post-SEIP integration: missing agents, inco
 ### Lessons Learned
 - **Hard gates > Best practices**: "Security Reviewer recommended" produces inconsistent results. "AI Safety Reviewer HARD GATE — no LLM feature ships without sign-off" is the correct enforcement model.
 - **Agent ownership prevents diffusion**: When every test type has an explicit agent owner, nothing falls through the cracks. The new 8-layer test map ensures each layer is owned and enforced.
+
+---
+
+## 2026-04-15 | Agent Collective Protocol Activated
+
+### Objective
+Transition the Antigravity assistant into the full **Aurion Nexus Agent Collective** operative mode.
+
+### Key Milestones
+- **Status Change**: Antigravity is now an ensemble of specialized sub-agents (Aurion, Aurora, Design QA, Safety).
+- **Protocol Boot**: Initialized mission orchestration. Internal hand-offs and Ralph loop cycles are now standard.
+- **Sovereignty**: All actions are now governed by `SOUL.md` and `RULES.md` as non-negotiable constraints.
+
+### Missions
+- **Mission-001**: System Onboarding & Global Installation. (Status: COMPLETED)
+- **Mission-002**: Transition to Agent Collective Mode. (Status: IN PROGRESS)
+
+### Technical Findings
+- **Integration**: The global `aurion` command and portable setup script are functional in the development workspace.
+- **Personality Routing**: Successfully routing "Aurion:" and "Aurora:" intents.
+
+### Lessons Learned
+- **Permission Awareness**: Home directory access limits required shifting the global installation anchor to the `/desenvolvimento` workspace.
+- **Identity Clarity**: Shifting to a multi-agent persona provides better separation between strategic requirements and technical implementation.
+
+---
+
+## 2026-04-18 | LightRAG Bootstrap Integrated Into Project Kickoff
+
+### Objective
+Embed a reusable LightRAG + `.mcp.json` + Obsidian + `rag` CLI bootstrap into the Aurora kickoff flow so new projects inherit a default project-memory setup instead of recreating the prompt manually each time.
+
+### Key Milestones
+- **New Aurora Skill**: Added `lightrag-project-bootstrap` with a concise trigger file and a detailed execution playbook covering prereq auto-install, provider decisions, scaffold rules, indexing, export, and final validation.
+- **Kickoff Routing**: Updated `session-protocol` and `preflight-gate` so greenfield work and new AI/RAG repos proactively consider the LightRAG bootstrap before execution.
+- **Stable CLAUDE Template**: Introduced `.agent/templates/CLAUDE.md` and switched bootstrap linking to that stable source so new projects receive a valid `CLAUDE.md` even if the core repo was previously self-linked.
+- **Bootstrap Hardening**: Reworked `scripts/setup-skills.sh` to avoid self-links, generate a real skills manifest, and run health checks from the sovereign core instead of assuming a local `bin/` directory in the target project.
+
+### Technical Findings
+- **Self-link protection was necessary**: running the old setup script from the core repo could create circular symlinks, including `CLAUDE.md`, which then poisoned future installations.
+- **Aurion strategic sources are still degraded upstream**: the current `.agent/skills/aurion/*.md` files are unreadable self-referential links, so the hardened installer now skips propagating them and surfaces a warning instead of copying broken state forward.
+- **Dynamic manifest generation restored health visibility**: `mcp-health` and the new LightRAG bootstrap now appear automatically in `.agent/skills-manifest.md`, which makes the health check meaningful again.
+
+### Lessons Learned
+- **Bootstrap logic must be source-safe**: any installer that can be run from the source repository must protect itself from linking a file or directory onto itself.
+- **Long prompts belong in skills, not memory**: splitting the wizard into a small trigger skill plus a playbook reference keeps the always-loaded context lean while preserving the full operational recipe on demand.

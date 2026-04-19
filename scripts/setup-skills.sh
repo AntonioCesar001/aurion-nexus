@@ -1,26 +1,67 @@
 #!/bin/bash
-# 🌌 Antigravity Skill Installer
+# 🌌 Aurion Nexus Skill Installer
 # Este script equipa o diretório atual com as skills do Aurion e da Aurora.
 
-SOURCE_DIR="/home/shoxsx/code/openclaw Aurion"
-AGENT_DIR="$PWD/.agent"
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AURION_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(pwd -P)"
+AGENT_DIR="$PROJECT_ROOT/.agent"
 SKILLS_DIR="$AGENT_DIR/skills"
+AURORA_SOURCE_DIR="$AURION_ROOT/.agent/skills/aurora"
+AURION_SOURCE_DIR="$AURION_ROOT/.agent/skills/aurion"
+CLAUDE_SOURCE="$AURION_ROOT/.agent/templates/CLAUDE.md"
 
-echo "🚀 Equipando projeto com Skills do Aurion e da Aurora..."
+safe_link() {
+    local src="$1"
+    local dest="$2"
 
-# 1. Criar diretórios
-mkdir -p "$SKILLS_DIR/aurora" "$SKILLS_DIR/aurion"
+    if [ "$src" = "$dest" ]; then
+        echo "↷ Pulando self-link: $dest"
+        return 0
+    fi
 
-# 2. Vincular Skills (Symlinks para manter atualizado)
-echo "🔗 Vinculando skills operacionais (Aurora)..."
-find "$SOURCE_DIR/projects/aurion-nexus/docs/aurora/skills" -mindepth 1 -maxdepth 1 -type d -exec ln -snf "{}" "$SKILLS_DIR/aurora/" \;
+    ln -snf "$src" "$dest"
+}
 
-echo "🔗 Vinculando blueprints estratégicos (Aurion)..."
-ln -snf "$SOURCE_DIR/projects/aurion-nexus/docs/standards/blueprints/"*.md "$SKILLS_DIR/aurion/"
+link_aurora_skills() {
+    local skill_dir
 
-# 3. Criar Router de Persona
-echo "📡 Configurando roteador de persona..."
-cat <<EOF > "$SKILLS_DIR/router.md"
+    echo "🔗 Vinculando skills operacionais (Aurora)..."
+    shopt -s nullglob
+    for skill_dir in "$AURORA_SOURCE_DIR"/*; do
+        [ -d "$skill_dir" ] || continue
+        safe_link "$skill_dir" "$SKILLS_DIR/aurora/$(basename "$skill_dir")"
+    done
+    shopt -u nullglob
+}
+
+link_aurion_skills() {
+    local skill_file
+    local linked_any=0
+
+    echo "🔗 Vinculando blueprints estratégicos (Aurion)..."
+    shopt -s nullglob
+    for skill_file in "$AURION_SOURCE_DIR"/*.md; do
+        if ! head -n 1 "$skill_file" >/dev/null 2>&1; then
+            echo "⚠️  Ignorando fonte estratégica ilegível: $(basename "$skill_file")"
+            continue
+        fi
+
+        safe_link "$skill_file" "$SKILLS_DIR/aurion/$(basename "$skill_file")"
+        linked_any=1
+    done
+    shopt -u nullglob
+
+    if [ "$linked_any" -eq 0 ]; then
+        echo "⚠️  Nenhuma skill estratégica legível foi vinculada."
+    fi
+}
+
+generate_router() {
+    echo "📡 Configurando roteador de persona..."
+    cat <<EOF > "$SKILLS_DIR/router.md"
 # SKILL.md — Antigravity Persona Router
 ## Description
 Define como Antigravity lida com os gatilhos Aurion: e Aurora:.
@@ -30,32 +71,62 @@ Acknowledge com 🏛️. Prioriza .agent/skills/aurion/. Foco em "Por que" e est
 ### Aurora (Operacional)
 Acknowledge com 🌌. Prioriza .agent/skills/aurora/. Foco em "Como" e execução.
 EOF
+}
 
-# 4. Final Health Check
-echo "Running initial health check..."
-./bin/health-check.sh
+generate_manifest() {
+    local skill_dir
+    local skill_file
 
-# 5. Criar Manifest
-echo "📄 Gerando manifesto de skills..."
-cat <<EOF > "$AGENT_DIR/skills-manifest.md"
+    echo "📄 Gerando manifesto de skills..."
+    cat <<EOF > "$AGENT_DIR/skills-manifest.md"
 # Skills Manifest - Antigravity
 ## 🧭 Routing
 - [router](file://$SKILLS_DIR/router.md)
 ## 🌌 Aurora (Operational)
-- Localizado em .agent/skills/aurora/
-## 🏛️ Aurion (Strategic)
-- Localizado em .agent/skills/aurion/
 EOF
 
-# 5. Atualizar AGENTS.md se existir, ou criar novo
-if [ ! -f "AGENTS.md" ]; then
-    cp "$SOURCE_DIR/projects/aurion-nexus/docs/standards/AGENTS.md" .
-    echo "📝 Criado AGENTS.md baseado no template oficial."
-else
-    if ! grep -q "Persona Protocols" "AGENTS.md"; then
-        cat <<EOF >> "AGENTS.md"
+    shopt -s nullglob
+    for skill_dir in "$SKILLS_DIR/aurora"/*; do
+        [ -f "$skill_dir/SKILL.md" ] || continue
+        printf -- "- **[%s]**(file://%s/SKILL.md)\n" "$(basename "$skill_dir")" "$skill_dir" >> "$AGENT_DIR/skills-manifest.md"
+    done
+    shopt -u nullglob
 
-### ⚡ Antigravity Integrated Skills
+    cat <<EOF >> "$AGENT_DIR/skills-manifest.md"
+## 🏛️ Aurion (Strategic)
+EOF
+
+    shopt -s nullglob
+    for skill_file in "$SKILLS_DIR/aurion"/*.md; do
+        [ -f "$skill_file" ] || continue
+        printf -- "- **[%s]**(file://%s)\n" "$(basename "$skill_file" .md)" "$skill_file" >> "$AGENT_DIR/skills-manifest.md"
+    done
+    shopt -u nullglob
+}
+
+echo "🚀 Equipando projeto com Skills do Aurion e da Aurora..."
+
+mkdir -p "$SKILLS_DIR/aurora" "$SKILLS_DIR/aurion"
+
+link_aurora_skills
+link_aurion_skills
+
+if [ -f "$CLAUDE_SOURCE" ]; then
+    echo "🔗 Vinculando instruções principais (CLAUDE.md)..."
+    safe_link "$CLAUDE_SOURCE" "$PROJECT_ROOT/CLAUDE.md"
+fi
+
+generate_router
+generate_manifest
+
+echo "Running initial health check..."
+"$AURION_ROOT/bin/health-check.sh"
+
+if [ -f "$PROJECT_ROOT/AGENTS.md" ]; then
+    if ! grep -q "Persona Protocols" "$PROJECT_ROOT/AGENTS.md"; then
+        cat <<EOF >> "$PROJECT_ROOT/AGENTS.md"
+
+### ⚡ Aurion Integrated Skills
 - **Manifest**: [.agent/skills-manifest.md](file://$AGENT_DIR/skills-manifest.md)
 - **Aurora**: \`.agent/skills/aurora/\`
 - **Aurion**: \`.agent/skills/aurion/\`
@@ -68,12 +139,16 @@ EOF
     fi
 fi
 
-# 6. Garantir TOOLS.md
-if [ ! -f "TOOLS.md" ]; then
-    cp "$SOURCE_DIR/projects/aurion-nexus/docs/standards/TOOLS.md" .
+if [ ! -f "$PROJECT_ROOT/RULES.md" ]; then
+    safe_link "$AURION_ROOT/RULES.md" "$PROJECT_ROOT/RULES.md"
+fi
+
+if [ ! -f "$PROJECT_ROOT/SOUL.md" ]; then
+    safe_link "$AURION_ROOT/SOUL.md" "$PROJECT_ROOT/SOUL.md"
 fi
 
 echo "------------------------------------------------------------"
 echo "✅ SUCESSO! O projeto está agora equipado com o Coletivo Supremo."
 echo "💡 Use 'Aurion: ' para estratégia ou 'Aurora: ' para execução."
-EOF
+echo "💡 Para Claude Code e Codex, as instruções foram linkadas."
+echo "------------------------------------------------------------"

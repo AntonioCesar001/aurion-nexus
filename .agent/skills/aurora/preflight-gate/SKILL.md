@@ -35,6 +35,8 @@ Determine which SEIP phases apply to this execution contract. Check each:
 | **Phase 9** (AI Safety) | Any user-facing AI feature | Full OWASP LLM Top 10 review. Guardrails required. Hard block without them |
 | **Phase 10** (Design Excellence) | Any UI work | Design QA agent required. axe-core audit required. Visual regression baseline updated |
 
+If Phase 8 applies on a new or unprepared repository, run `.agent/skills/aurora/lightrag-project-bootstrap/SKILL.md` before implementation whenever the team needs repo memory, a project-scoped MCP, or a terminal RAG workflow.
+
 ### Block 4 — Value Chain Alignment
 For complex tasks, identify which SEIP value chain applies and confirm dependencies are in place:
 

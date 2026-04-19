@@ -1,0 +1,107 @@
+# ===============================================================
+# 🔍  Lint & Static Analysis
+# ===============================================================
+#
+#   - runs ruff (linter + formatter check) and mypy in parallel
+#   - ruff catches import ordering, style violations, bugbear
+#   - mypy enforces strict type checking with pydantic plugin
+#   - fast — should complete in under 2 minutes
+# ---------------------------------------------------------------
+
+name: Lint & Static Analysis
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/lint.yml"
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/lint.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # -----------------------------------------------------------
+  # Job 1 — Ruff: lint rules + format check
+  # -----------------------------------------------------------
+  ruff:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    name: ruff (lint + format)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: ⬇️  Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: 🐍  Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 📦  Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: 📦  Install dependencies
+        run: uv sync --frozen --extra lint
+
+      - name: 🔍  Ruff lint
+        run: uv run ruff check src/
+
+      - name: 🎨  Ruff format check
+        run: uv run ruff format --check src/
+
+  # -----------------------------------------------------------
+  # Job 2 — Mypy: strict type checking
+  # -----------------------------------------------------------
+  mypy:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    name: mypy (type checking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: ⬇️  Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: 🐍  Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 📦  Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: 📦  Install dependencies
+        run: uv sync --frozen --extra dev
+
+      - name: 🔍  Mypy strict
+        run: uv run mypy src/wikimind

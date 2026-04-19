@@ -5,7 +5,7 @@ This guide will walk you through setting up your own autonomous agentic collecti
 ## 📋 Prerequisites
 
 - **Node.js**: v18.0.0 or higher.
-- **Python**: v3.9 or higher.
+- **Python**: v3.11 or higher (Required for LightRAG).
 - **Git**: For repository management.
 - **MCP Servers**: Ensure you have `StitchMCP` and `GitHub MCP Server` configured.
 
@@ -23,13 +23,20 @@ Create a `secrets/` directory and add your environment-specific credentials:
 - `stitch.env`: For your MCP access tokens.
 - `vercel.env`: For automated deployments.
 
-### 3. Initialize the Agents
+### 3. Initialize the Agents Locally
 ```bash
-npm run setup
+./bin/aurion setup
 # This will register the skills manifest and initialize the Aurora squad.
 ```
 
-### 4. Smoke Test
+### 4. Global AI Installation (Recommended)
+Make Aurion Nexus the default brain for all your AI agents (Claude Code, Antigravity, Cursor, Codex) across your entire OS:
+```bash
+./bin/nexus-global-install
+```
+*This exposes `aurion` globally and writes system hooks to your `~/.claude.json`, `~/.cursorrules`, etc, ensuring AI autonomy anywhere.*
+
+### 5. Smoke Test
 Ask the system:
 *"Aurion, quem é você e qual sua missão?"*
 Verify that it references the `SOUL.md` and identifies your project context from the `Chronicle`.

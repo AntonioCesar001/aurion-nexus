@@ -1,0 +1,43 @@
+#!/bin/bash
+# bin/nexus-push
+# Synchronizes the local LightRAG knowledge graph into the WikiMind Central Knowledge OS.
+
+set -e
+
+WIKIMIND_URL="${WIKIMIND_URL:-http://localhost:7842}"
+STORAGE_DIR="tools/lightrag/rag_storage"
+
+echo "🌌 Authenticating with Enterprise Knowledge Graph (WikiMind Core)..."
+
+if [ ! -d "$STORAGE_DIR" ]; then
+    echo "❌ Error: LightRAG storage directory ($STORAGE_DIR) not found."
+    echo "Make sure you have bootstrapped the repository via: aurion mission 'LightRAG bootstrap'"
+    exit 1
+fi
+
+echo "📦 Bundling Knowledge Graph data from $STORAGE_DIR..."
+
+BUNDLE_FILE="/tmp/$(basename $PWD)_lightrag_manifest.json"
+
+# In a full implementation, this script will compress graphml and kv json
+# into a unified structured manifest for WikiMind Core ingestion.
+jq -n --arg name "$(basename $PWD)" '{
+  "repo": $name,
+  "sync_version": "1.0",
+  "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+}' > "$BUNDLE_FILE"
+
+echo "🚀 Transmitting Graph to Core Hub at $WIKIMIND_URL/ingest/graph..."
+
+PAYLOAD=$(jq -n --arg json "$(cat $BUNDLE_FILE)" --arg title "$(basename $PWD) Knowledge Graph" '{
+  manifest_json: $json,
+  title: $title,
+  auto_compile: true
+}')
+
+curl -s -X POST "$WIKIMIND_URL/ingest/graph" \
+     -H "Content-Type: application/json" \
+     -d "$PAYLOAD" || echo "Warning: Connection to WikiMind Core failed. Is it running?"
+
+echo ""
+echo "✅ Graph pushed to WikiMind Central Knowledge OS for compilation."

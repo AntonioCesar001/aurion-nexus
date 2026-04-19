@@ -1,7 +1,7 @@
 # 🌌 Aurion Nexus: The Intent-Based Autonomous Agentic Ecosystem
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js 18+](https://img.shields.io/badge/node-18+-green.svg)](https://nodejs.org/)
 
 **Aurion Nexus** is a state-of-the-art multi-agent collective designed for autonomous software engineering, strategic architectural management, and premium UI/UX delivery. It transforms the interaction with AI from a command-based chat into an **intent-driven partnership**.
@@ -62,10 +62,10 @@ Manage your entire collective with a single command based on the `bin/aurion` en
 
 See [INSTALL.md](INSTALL.md) for a detailed setup guide.
 
-1. Install dependencies.
+1. Initialize the core: `./bin/aurion setup`.
 2. Configure your keys in `secrets/`.
-3. Launch: `aurion start`.
-4. Say: *"Make a new CRM dashboard"* and watch the squad take over.
+3. Open your AI Assistant (like Claude Code or Cursor).
+4. Say: *"Aurion, make a new CRM dashboard"* and watch the squad take over.
 
 ---
 

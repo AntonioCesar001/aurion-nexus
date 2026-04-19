@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""
+Nexus Catalog Ingester
+
+Parses Aurion's Knowledge Markdown files for GitHub repository links
+and automatically sub-mits them to the Enterprise Knowledge Graph (WikiMind Core)
+for text extraction, semantic chunking, and inclusion in the core RAG brain.
+"""
+
+import re
+import sys
+import json
+from pathlib import Path
+from urllib import request, error
+
+# Setup
+KNOWLEDGE_DIR = Path(__file__).resolve().parent.parent / ".agent" / "knowledge"
+WIKIMIND_INGEST_URL = "http://127.0.0.1:7842/ingest/url"
+
+def extract_urls(markdown_path: Path) -> list:
+    """Extrai URLs de Github do arquivo markdown."""
+    urls = []
+    if not markdown_path.exists():
+        return urls
+        
+    content = markdown_path.read_text("utf-8")
+    # Captura variações como "https://github.com/torvalds/linux" 
+    matches = re.finditer(r"https://github\.com/([\w\-]+)/([\w\-]+)", content)
+    
+    for match in matches:
+        raw_url = match.group(0)
+        urls.append(raw_url)
+        
+    # Remove duplicatas preservando a ordem
+    return list(dict.fromkeys(urls))
+
+def post_to_wikimind(url: str):
+    """Envia a URL para o servidor local do WikiMind central."""
+    payload = json.dumps({
+        "url": url,
+        "auto_compile": True
+    }).encode("utf-8")
+    
+    req = request.Request(
+        WIKIMIND_INGEST_URL, 
+        data=payload,
+        headers={"Content-Type": "application/json"}
+    )
+    
+    try:
+        with request.urlopen(req) as response:
+            res_data = json.loads(response.read().decode())
+            print(f"✅ [SUCCESS] Sent: {url} -> {res_data.get('status')}")
+    except error.HTTPError as e:
+        print(f"❌ [HTTP Error] Failed to send {url}: {e.code} - {e.reason}")
+    except error.URLError as e:
+        print(f"❌ [Connection Error] Backend not reachable. Is WikiMind running on 7842? ({e.reason})")
+
+def main():
+    print("🌌 Initializing Nexus Catalog Ingester...")
+    
+    all_urls = []
+    
+    if not KNOWLEDGE_DIR.exists():
+        print(f"Directory {KNOWLEDGE_DIR} not found.")
+        sys.exit(1)
+        
+    for md_file in KNOWLEDGE_DIR.glob("*.md"):
+        urls = extract_urls(md_file)
+        print(f"Found {len(urls)} repositories in {md_file.name}")
+        all_urls.extend(urls)
+        
+    all_urls = list(dict.fromkeys(all_urls))
+    print(f"📦 Total unique repositories to ingest: {len(all_urls)}\n")
+    
+    for url in all_urls:
+        print(f"🔗 Processing {url} ...")
+        post_to_wikimind(url)
+        
+    print("\n✅ Batch injection mapped.")
+    print("The WikiMind ARQ Worker will now process the raw repositories in the background.")
+    print("They will be embedded and available locally shortly.")
+
+if __name__ == "__main__":
+    main()

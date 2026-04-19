@@ -7,6 +7,10 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$DIR")"
+cd "$PROJECT_ROOT" || exit 1
+
 echo -e "${BLUE}🌌 Starting Aurion Nexus Health Check...${NC}"
 
 # 1. Check Secrets

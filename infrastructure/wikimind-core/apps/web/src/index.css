@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+.wikilink-unresolved {
+  color: rgb(148 163 184); /* slate-400 */
+  text-decoration: underline dotted rgb(148 163 184);
+  text-underline-offset: 2px;
+  cursor: help;
+}

@@ -26,6 +26,7 @@ Before starting any non-trivial work:
 2. **Check context** — Run `/context` to see current token consumption and what's eating budget.
 3. **Use Plan Mode first** — Press `Shift+Tab` to activate Plan Mode before any complex task. Claude maps the approach, you approve, then it executes. This prevents 2–5× token waste from wrong-direction rework.
 4. **One conversation per domain** — Never carry context from Task A into Task B. Different topics = `/clear` and start fresh.
+5. **New project memory bootstrap** — On greenfield repos or repo-onboarding work, load `.agent/skills/aurora/lightrag-project-bootstrap/SKILL.md` unless the user explicitly does not want a LightRAG + MCP + Obsidian setup.
 
 ---
 

@@ -48,7 +48,7 @@ case "$1" in
             echo "Chronicle not found."
         fi
         ;;
-    setup)
+    setup|link)
         "$PARENT_DIR/scripts/setup-skills.sh"
         ;;
     *)
