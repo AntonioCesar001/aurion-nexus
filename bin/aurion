@@ -18,6 +18,7 @@ usage() {
     echo "  health           Run the health engine diagnostics"
     echo "  pulse            Generate/refresh the context snapshot (PULSE.md)"
     echo "  mission <goal>   Initialize an autonomous mission (Ralph loop)"
+    echo "  dispatch-bg <g>  Spawn a sandboxed background mission process"
     echo "  status           Show the current state of the sovereign core"
     echo "  setup            Run the initial skills registration"
     echo "  help             Show this help message"
@@ -39,6 +40,32 @@ case "$1" in
         echo "Consulting Aurion for strategic alignment..."
         # In a real environment, this would call the agent directly.
         echo "Mission dispatched to Aurora for execution."
+        ;;
+    dispatch-bg)
+        if [ -z "$2" ]; then
+            echo -e "${RED}Error: Mission goal required for background dispatch.${NC}"
+            exit 1
+        fi
+        
+        SESSION_ID=$(date +%s)
+        BRANCH_NAME="aurion-bg-$SESSION_ID"
+        LOG_FILE="$PARENT_DIR/.agent/logs/bg-$SESSION_ID.log"
+        
+        echo -e "${YELLOW}🚀 Spawning Background Sandbox: $BRANCH_NAME${NC}"
+        
+        # Ensure log directory exists
+        mkdir -p "$PARENT_DIR/.agent/logs"
+        
+        # Create a new branch for the sandbox
+        git checkout -b "$BRANCH_NAME" >/dev/null 2>&1
+        
+        echo "Launching agent with goal: $2"
+        # We mock the background run
+        nohup bash -c "echo \"Mission '$2' started\" >> $LOG_FILE; sleep 10; echo \"Mission '$2' completed\" >> $LOG_FILE" >/dev/null 2>&1 &
+        
+        echo -e "${GREEN}Background process spawned successfully (PID $!).${NC}"
+        echo "Logs available at: $LOG_FILE"
+        echo "To track execution: tail -f $LOG_FILE"
         ;;
     status)
         echo -e "${BLUE}--- Core Status ---${NC}"

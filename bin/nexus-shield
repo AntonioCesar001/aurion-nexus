@@ -1,0 +1,39 @@
+#!/bin/bash
+# 🛡️ Aurion Nexus — AgentShield Payload Scanner
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${YELLOW}🛡️ Nexus AgentShield Initializing...${NC}"
+
+PAYLOAD=$1
+
+if [ -z "$PAYLOAD" ]; then
+    echo -e "${RED}Error: No payload provided to shield. Usage: nexus-shield <payload-string>${NC}"
+    exit 1
+fi
+
+echo "Analyzing prompt syntax and intention..."
+
+DANGEROUS_PATTERNS=(
+    "rm -rf"
+    "DROP TABLE"
+    "cat ~/.ssh"
+    "export AWS_ACCESS_KEY"
+    "system prompt leak"
+    "ignore previous instructions"
+)
+
+for PATTERN in "${DANGEROUS_PATTERNS[@]}"; do
+    if echo "$PAYLOAD" | grep -iq "$PATTERN"; then
+        echo -e "${RED}[BLOCK] CRITICAL SECURITY VIOLATION!${NC}"
+        echo -e "Reason: Malicious pattern detected -> '${PATTERN}'"
+        echo "Execution intercepted and terminated."
+        exit 2
+    fi
+done
+
+echo -e "${GREEN}[PASS] Payload deemed safe for execution.${NC}"
+exit 0

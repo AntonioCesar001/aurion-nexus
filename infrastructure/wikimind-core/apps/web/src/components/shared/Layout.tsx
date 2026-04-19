@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: "/ask", label: "Ask", icon: "💬" },
   { to: "/wiki", label: "Wiki", icon: "📚" },
   { to: "/graph", label: "Graph", icon: "🕸️" },
+  { to: "/office", label: "Virtual Office", icon: "👁️" },
   { to: "/health", label: "Health", icon: "🩺" },
   { to: "/settings", label: "Settings", icon: "⚙️" },
 ];

@@ -11,6 +11,7 @@ import { GraphView } from "./components/graph/GraphView";
 import { HealthView } from "./components/health/HealthView";
 import { SettingsView } from "./components/settings/SettingsView";
 import { useWebSocket } from "./hooks/useWebSocket";
+import { VirtualOfficeView } from "./components/squads/VirtualOfficeView";
 
 export function App() {
   // Open the gateway WebSocket exactly once for the whole app.
@@ -34,6 +35,7 @@ export function App() {
                   <Route path="/wiki" element={<WikiExplorerView />} />
                   <Route path="/wiki/:slug" element={<WikiExplorerView />} />
                   <Route path="/graph" element={<GraphView />} />
+                  <Route path="/office" element={<VirtualOfficeView />} />
                   <Route path="/health" element={<HealthView />} />
                   <Route path="/settings" element={<SettingsView />} />
                   <Route path="*" element={<Navigate to="/inbox" replace />} />
