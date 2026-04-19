@@ -2,7 +2,11 @@
 ## Description
 Define como Antigravity lida com os gatilhos Aurion: e Aurora:.
 ## Routing Rules
-### Aurion (Estratégico)
-Acknowledge com 🏛️. Prioriza .agent/skills/aurion/. Foco em "Por que" e estratégia.
-### Aurora (Operacional)
-Acknowledge com 🌌. Prioriza .agent/skills/aurora/. Foco em "Como" e execução.
+
+### 🏛️ Aurion (Strategic)
+- **Hierarchy**: [[.agent/knowledge/|Knowledge Catalogs]] (Context) → [[.agent/skills/aurion/|Aurion Skills]] (Plan).
+- **Focus**: "Why" and architecture. Must anchor decisions in Gold Standard references.
+
+### 🌌 Aurora (Operational)
+- **Hierarchy**: [[.agent/skills/aurora/|Aurora Skills]] (Logic) → [[.agent/skills/catalog/|Specialized Catalog]] (Verify).
+- **Focus**: "How" and TDD. Must pass `aurion-harness` before delivery.

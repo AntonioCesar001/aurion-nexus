@@ -1,6 +1,11 @@
 # Catálogo Avançado de Borda, Plataformas (BaaS/CMS), Storage e Inteligência Artificial (MLOps/LLMOps)
 
-Este documento foi extraído para fornecer aos agentes (Aurion, Aurora, etc.) referências arquiteturais sólidas (Gold Standards) focadas no nível avançado da engenharia: Gateways de borda, plataformas completas (BaaS), Data Storage estruturado (Cache/Object Storage) e a camada de operações de IA Aplicada.
+Este documento fornece referências arquiteturais sólidas (Gold Standards) para a camada de infraestrutura avançada e operações de IA.
+
+## 🧠 IA Interpretation Guidelines
+1. **Model Evolution**: O agente deve consultar o repositório se precisar implementar uma nova técnica de RAG ou compressão de contexto.
+2. **Safety First**: Repositórios de AI Safety (ex: Garak, NeMo) devem ser consultados pelo agente **Shield** antes de deploys em produção.
+3. **Skill Link**: Cross-reference com o catálogo de skills em [[.agent/skills/catalog/(security)/README.md]].
 
 ## Fase 1 — Fundação adicional de arquitetura e borda
 

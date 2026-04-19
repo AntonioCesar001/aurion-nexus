@@ -1,6 +1,12 @@
 # Catálogo Expandido: Engenharia, Produto e Inteligência (Aurion)
 
-Esta lista compõe o Volume 2 das referências de padrão de ouro (Gold Standard) mantidas na base de conhecimento da Aurion para as equipes de Agentes e Operadores Técnicos.
+Esta lista compõe o Volume 2 das referências de padrão de ouro (Gold Standard) mantidas na base de conhecimento da Aurion.
+
+## 🧠 IA Interpretation Guidelines
+1. **Reference Check**: Antes de qualquer implementação de Backend ou Frontend, consulte as categorias "Arquitetura de Backend" ou "Frontend Estrutural".
+2. **Domain Mapping**: Use os repositórios de "Domínio de Negócio" para extrair terminologia (Linguagem Ubíqua) para suas classes e tabelas.
+3. **Security Anchor**: Repositórios da Fase 6 devem ser o seu "Vade Mecum" de segurança.
+4. **Linking**: Conecte com os protocolos operacionais em [[.agent/skills/aurora/mission-protocol.md]].
 
 ## Fase 1 — Fundamentos de engenharia, estrutura e clareza
 

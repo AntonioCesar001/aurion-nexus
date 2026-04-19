@@ -21,6 +21,8 @@ build/
 .tmp/
 .agent/browser_profiles/
 .agent/logs/
+logs/
+missions/
 
 # Antigravity Brain (generated per-session, not shareable)
 .gemini/antigravity/brain/

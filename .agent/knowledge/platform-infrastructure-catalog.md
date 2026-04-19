@@ -1,6 +1,12 @@
 # Catálogo de Referência de Plataforma e Infraestrutura para Agentes (Aurion)
 
-Esta lista contém referências absolutas de infraestrutura, plataforma e SRE, mantidas para orçamentar agentes e sub-agentes no ecossistema Aurion Nexus quando eles precisarem arquitetar gateways, segurança em K8s, busca corporativa, billing, e colaboração baseada nos repositórios "Gold Standard" do Open Source.
+Esta lista contém referências de infraestrutura, plataforma e SRE para orçamentar decisões de gateways, segurança e K8s.
+
+## 🧠 IA Interpretation Guidelines
+1. **Infrastructure as Code**: Se a tarefa envolver terraform ou k8s, consulte a Fase 2 antes de gerar manifestos.
+2. **Security & Secrets**: O agente **Shield** deve validar o uso de segredos baseado no [hashicorp/vault] deste catálogo.
+3. **Observation**: Use as referências de Monitoramento (Fase 3) para estruturar logs e status pages.
+4. **Linking**: Conecte com os protocolos de infra em [[.agent/skills/aurora/infra-deploy/SKILL.md]].
 
 ## Fase 1 — Fundação adicional da plataforma e arquitetura
 

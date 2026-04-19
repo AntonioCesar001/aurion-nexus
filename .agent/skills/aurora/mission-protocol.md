@@ -14,9 +14,10 @@ Aurora does not consider a mission complete until it is verified.
 `Plan → Execute → Verify → Fix (Loop if verification fails)`
 
 ### Phase 1: Planning
-1. **Context Refresh**: Read `CHRONICLE.md` and `CLAUDE.md` to align with the project's history and current instructions.
-2. **Architect Review**: Spawn an `architect` agent to analyze the current codebase and proposed changes.
-3. **Implementation Strategy**: Create a step-by-step TODO list with clear acceptance criteria.
+1. **Context Refresh**: Read [[CHRONICLE.md]] and [[CLAUDE.md]] to align with the project's history.
+2. **Knowledge Anchor**: Consult the relevant [[.agent/knowledge/|Knowledge Catalogs]] to justify structural decisions. **Prohibited**: Implementing architectural patterns not supported by a Gold Standard reference without justification.
+3. **Architect Review**: Spawn an `architect` agent to analyze the current codebase.
+4. **Implementation Strategy**: Create a step-by-step TODO list with clear acceptance criteria.
 
 
 ### Phase 2: Execution

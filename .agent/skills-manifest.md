@@ -16,3 +16,12 @@
 - **[session-protocol]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/aurora/session-protocol/SKILL.md)
 - **[testing-standards]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/aurora/testing-standards/SKILL.md)
 ## 🏛️ Aurion (Strategic)
+- [harness-engineering](file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/catalog/harness-engineering/SKILL.md)
+
+## 📚 Skill Catalog (Specialized)
+- **[Architecture]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/catalog/(architecture)/)
+- **[Security]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/catalog/(security)/)
+- **[Performance]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/catalog/(performance)/)
+- **[Design]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/catalog/(design)/)
+- **[Quality]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/catalog/(quality)/)
+- **[Cloud]**(file:///Users/ton_dev/desenvolvimento/aurion-nexus/.agent/skills/catalog/(cloud)/)

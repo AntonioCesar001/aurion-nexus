@@ -1,6 +1,13 @@
 # Catálogo de Referência de Engenharia para Agentes (Aurion)
 
-Esta lista contém referências absolutas de arquitetura, padrões e engenharia mantidas para orçamentar agentes e sub-agentes no ecossistema Aurion Nexus quando eles precisarem ancorar suas escolhas arquiteturais em repositórios "Gold Standard" do Open Source. 
+Esta lista contém referências absolutas de arquitetura, padrões e engenharia mantidas para orçamentar agentes e sub-agentes no ecossistema Aurion Nexus.
+
+## 🧠 IA Interpretation Guidelines
+Para garantir a interpretação correta deste catálogo:
+1. **Consultation**: O agente deve abrir o link do GitHub se a descrição abaixo for insuficiente para a decisão atual.
+2. **Context Anchor**: Toda decisão de arquitetura deve citar o repositório deste catálogo que a fundamenta.
+3. **Deep Dive**: Use a ferramenta `read_url_content` para ler o `README.md` do repositório alvo se precisar de exemplos de implementação específicos.
+4. **Graph Sync**: Garanta que os links internos em [[.agent/skills/catalog/(architecture)/README.md]] sejam respeitados.
 
 ## Fase 1 — Fundação adicional da engenharia
 

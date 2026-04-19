@@ -1,17 +1,17 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AuthCallback from "./components/auth/AuthCallback";
 import AuthProvider from "./components/auth/AuthProvider";
-import LoginPage from "./components/auth/LoginPage";
+import LoginPage from "./views/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Layout } from "./components/shared/Layout";
-import { InboxView } from "./components/inbox/InboxView";
-import { WikiExplorerView } from "./components/wiki/WikiExplorerView";
-import { AskView } from "./components/ask/AskView";
-import { GraphView } from "./components/graph/GraphView";
-import { HealthView } from "./components/health/HealthView";
-import { SettingsView } from "./components/settings/SettingsView";
+import { InboxView } from "./views/InboxView";
+import { WikiExplorerView } from "./views/WikiExplorerView";
+import { AskView } from "./views/AskView";
+import { GraphView } from "./views/GraphView";
+import { HealthView } from "./views/HealthView";
+import { SettingsView } from "./views/SettingsView";
 import { useWebSocket } from "./hooks/useWebSocket";
-import { VirtualOfficeView } from "./components/squads/VirtualOfficeView";
+import { VirtualOfficeView } from "./views/VirtualOfficeView";
 
 export function App() {
   // Open the gateway WebSocket exactly once for the whole app.

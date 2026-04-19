@@ -3,21 +3,21 @@
 Intent-based agentic collective for autonomous software delivery. Describe the goal; the system assembles the right squad.
 
 ## Governance
-- Soul & principles: [SOUL.md](SOUL.md)
-- Non-negotiable rules: [RULES.md](RULES.md)
-- Project memory: [CHRONICLE.md](CHRONICLE.md) — read before major tasks
-- Current pulse: [PULSE.md](PULSE.md) when present
+- Soul & principles: [[.agent/docs/RULES.md|RULES.md]]
+- Non-negotiable rules: [[.agent/docs/RULES.md|RULES.md]]
+- Project memory: [[.agent/docs/CHRONICLE.md|CHRONICLE.md]] — read before major tasks
+- Current pulse: [[PULSE.md]] when present
 
 ## Knowledge Base (Read before making structural decisions)
-- Architectural references: [.agent/knowledge/architectural-reference-catalog.md](.agent/knowledge/architectural-reference-catalog.md)
-- Product & Engineering: [.agent/knowledge/engineering-and-product-reference-catalog.md](.agent/knowledge/engineering-and-product-reference-catalog.md)
-- Platform & Infrastructure: [.agent/knowledge/platform-infrastructure-catalog.md](.agent/knowledge/platform-infrastructure-catalog.md)
-- Advanced AI & Edge: [.agent/knowledge/advanced-platform-ai-catalog.md](.agent/knowledge/advanced-platform-ai-catalog.md)
-- Session Insights: [.agent/knowledge/insights/](.agent/knowledge/insights/) — auto-saved learnings from conversations
+- Architectural references: [[.agent/knowledge/architectural-reference-catalog.md|architectural-reference-catalog.md]]
+- Product & Engineering: [[.agent/knowledge/engineering-and-product-reference-catalog.md|engineering-and-product-reference-catalog.md]]
+- Platform & Infrastructure: [[.agent/knowledge/platform-infrastructure-catalog.md|platform-infrastructure-catalog.md]]
+- Advanced AI & Edge: [[.agent/knowledge/advanced-platform-ai-catalog.md|advanced-platform-ai-catalog.md]]
+- Session Insights: [[.agent/knowledge/insights/]] — auto-saved learnings from conversations
 
-## Squads
-- **Aurion**: strategy, architecture, ADR, deep interview, consensus
-- **Aurora**: implementation, Ralph loop, TDD, security, design QA, AI safety
+## Squads & Roles
+- **Authority**: Roles and guardrails for all agents (Aurion, Aurora, Shield, Design) are strictly defined in **[.agent/docs/AGENTS.md](.agent/docs/AGENTS.md)**.
+- **Action**: Always consult `AGENTS.md` before deciding which agent to invoke for a task.
 
 ## New Project Default
 - On greenfield repos or repo-onboarding work, proactively use [.agent/skills/aurora/lightrag-project-bootstrap/SKILL.md](.agent/skills/aurora/lightrag-project-bootstrap/SKILL.md) to bootstrap project memory (LightRAG + `.mcp.json` + `rag` CLI + Obsidian) unless the user opts out.
