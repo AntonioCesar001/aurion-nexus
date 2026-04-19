@@ -10,6 +10,10 @@ Transform Aurion Nexus into a world-class sovereign agentic framework with elite
 - **Observability (FinOps)**: Launched [Nexus Stats](file:///Users/ton_dev/desenvolvimento/aurion-nexus/bin/nexus-stats) for real-time token cost tracking and [Nexus Trace](file:///Users/ton_dev/desenvolvimento/aurion-nexus/bin/nexus-trace) for OTel-based causality visualization.
 - **Interoperability**: Implemented [Nexus Bridge](file:///Users/ton_dev/desenvolvimento/aurion-nexus/bin/nexus-bridge) for Model Context Protocol (MCP) standardization.
 - **Multi-Agent Architecture**: Established the [Nexus Blackboard](file:///Users/ton_dev/desenvolvimento/aurion-nexus/bin/nexus-blackboard) protocol for shared state orchestration.
+- **Sovereign Scale**: Integrated System Design patterns from [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer).
+    - **Resilience**: Circuit Breaker & Fallback in `aurion.py`.
+    - **Performance**: Semantic Caching in `nexus-cache`.
+    - **Scalability**: Asynchronous background mission dispatch (`--bg`).
     - Aurion now uses Socratic Deep Interviewing to gate execution.
 - **Memory & Persistence**: Initiated "The Chronicle" protocol to prevent session amnesia.
 

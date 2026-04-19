@@ -13,7 +13,11 @@ Esta lista contém referências absolutas de arquitetura, padrões e engenharia 
   - **O que ensina para a IA**: DDD + Hexagonal + CQRS + EDA em TypeScript.
   - **Uso**: Muito próximo do ecossistema Node/TS. Usar para exemplos concretos de DDD sem inventar estrutura do zero. Nível avançado.
 
-### Categoria: Documentação de arquitetura e padrões
+### Categoria: Documentação de Arquitetura e System Design
+* **donnemartin/system-design-primer** — [GitHub](https://github.com/donnemartin/system-design-primer)
+  - **O que ensina para a IA**: Bíblia completa de escalabilidade, load balancing, caching e trade-offs de bancos de dados.
+  - **Uso**: Referência fundamental para desenhar sistemas que precisam escalar para milhões de usuários (Sovereign Scale). Usar para justificar sharding, filas e resiliência. Nível: Especialista.
+
 * **mehdihadeli/awesome-software-architecture** — [GitHub](https://github.com/mehdihadeli/awesome-software-architecture)
   - **O que ensina para a IA**: Mapa completo de arquiteturas, padrões, e trade-offs. 
   - **Uso**: Excelente para consultar e justificar escolhas entre estilos arquiteturais. Nível intermediário.

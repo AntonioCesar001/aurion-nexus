@@ -21,9 +21,23 @@ if [ -f "$DIR/aurion.py" ]; then
     fi
     # Only pass specific commands to elite UI for now
     case "${1:-}" in
-        status|health|mission)
+        status|health)
             $PYTHON_EXEC "$DIR/aurion.py" "$@"
             exit $?
+            ;;
+        mission)
+            # Check for background flag
+            if [[ "${3:-}" == "--bg" ]]; then
+                echo "🚀 Dispatching mission to background..."
+                LOG_FILE="$PARENT_DIR/mission_$(date +%Y%m%d_%H%M%S).log"
+                nohup $PYTHON_EXEC "$DIR/aurion.py" "$1" "$2" "${@:4}" > "$LOG_FILE" 2>&1 &
+                echo "Mission PID: $!"
+                echo "Tail logs with: tail -f $LOG_FILE"
+                exit 0
+            else
+                $PYTHON_EXEC "$DIR/aurion.py" "$@"
+                exit $?
+            fi
             ;;
     esac
 fi

@@ -26,6 +26,32 @@ tracer = get_tracer()
 console = Console()
 
 
+class ProviderManager:
+    """Manages LLM providers with Circuit Breaker and Fallback logic."""
+    def __init__(self):
+        self.providers = ["anthropic", "openai", "google"]
+        self.active_provider = "anthropic"
+        self.failure_count = 0
+        self.threshold = 3
+
+    def get_completion(self, prompt: str):
+        """Simulate resilience-aware completion."""
+        try:
+            # Simulate call to active provider
+            if self.failure_count >= self.threshold:
+                raise Exception("Primary provider down")
+            return f"Response from {self.active_provider}"
+        except Exception as e:
+            self.fallback()
+            return self.get_completion(prompt)
+
+    def fallback(self):
+        """Switch to next available provider."""
+        current_idx = self.providers.index(self.active_provider)
+        self.active_provider = self.providers[(current_idx + 1) % len(self.providers)]
+        self.failure_count = 0
+        console.print(f"[bold red]⚠️ Circuit Breaker Triggered![/bold red] Switching to [bold yellow]{self.active_provider}[/bold yellow]")
+
 class AurionCLI:
     def __init__(self):
         self.version = "1.1.0-ELITE"

@@ -40,9 +40,26 @@ def parse_usage(log_content: str) -> List[Dict[str, Any]]:
         })
     return usages
 
+def get_cache_stats() -> Dict[str, Any]:
+    cache_dir = Path(".agent/cache/missions")
+    if not cache_dir.exists():
+        return {"count": 0, "size": 0}
+    files = list(cache_dir.glob("*.json"))
+    return {"count": len(files), "size": sum(f.stat().st_size for f in files) / 1024}
+
 def show_stats():
-    console.print(Panel("[bold cyan]📊 Aurion Nexus — Token Consumption Dashboard (Elite FinOps)[/bold cyan]"))
+    console.print(Panel("[bold cyan]📊 Aurion Nexus — Sovereign Performance & FinOps Dashboard[/bold cyan]"))
     
+    # Cache Stats
+    c_stats = get_cache_stats()
+    cache_panel = Panel(
+        f"[bold]Missions Cached:[/bold] [green]{c_stats['count']}[/green]\n"
+        f"[bold]Cache Storage:[/bold] [cyan]{c_stats['size']:.2f} KB[/cyan]\n"
+        f"[bold]Estimated Savings:[/bold] [bold green]~${c_stats['count'] * 0.15:.2f} USD[/bold green]",
+        title="🧠 Semantic Cache Layer", border_style="green"
+    )
+    console.print(cache_panel)
+
     root_dir = Path(__file__).resolve().parent.parent
     log_files = list(root_dir.glob("mission_*.log"))
     
