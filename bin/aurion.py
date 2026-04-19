@@ -29,7 +29,7 @@ console = Console()
 class ProviderManager:
     """Manages LLM providers with Circuit Breaker, Model Routing, and Prompt Caching logic."""
     def __init__(self):
-        self.providers = ["anthropic", "openai", "local-ollama"]
+        self.providers = ["anthropic", "openai"]
         self.active_provider = "anthropic"
         self.failure_count = 0
         self.threshold = 3
@@ -107,6 +107,20 @@ class AurionCLI:
         console.print(stats)
 
     def run_mission(self, goal: str):
+        # Mandatory Harness Gatekeeper
+        import subprocess
+        harness_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "aurion-harness")
+        try:
+            subprocess.run([sys.executable, harness_path, "--validate"], check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            console.print(Panel(
+                f"[bold red]❌ SECURITY GATEKEEPER ERROR[/bold red]\n"
+                f"Sovereign integrity check failed. Mission aborted.\n\n"
+                f"[dim]{e.stdout.decode()}[/dim]",
+                border_style="red"
+            ))
+            sys.exit(1)
+
         provider = ProviderManager()
         
         with tracer.start_as_current_span("mission_execution") as span:

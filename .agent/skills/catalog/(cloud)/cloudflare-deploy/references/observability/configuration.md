@@ -84,7 +84,7 @@ Tail Workers receive logs/traces from other Workers for filtering, transformatio
 name = "log-processor"
 main = "src/tail.ts"
 
-[[tail_consumers]]
+tail_consumers
 service = "my-worker" # Worker to tail
 ```
 

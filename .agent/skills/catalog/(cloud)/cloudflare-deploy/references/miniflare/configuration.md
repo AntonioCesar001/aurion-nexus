@@ -160,7 +160,7 @@ Miniflare doesn't auto-read `wrangler.toml`:
 name = "my-worker"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
-[[kv_namespaces]]
+kv_namespaces
 binding = "KV"
 ```
 

@@ -15,7 +15,7 @@ As of main (commit `d57d617`), WikiMind has shipped the full Ask vertical slice 
 
 Epic 3 is not just a visualization. It is also a set of graph-native queries that only make sense once the wiki is treated as a graph structure: "what connects these two articles?", "what is the shortest path between A and B?", "which concept clusters are sparsest?" Those queries feed back into the linter's data-gap detection later.
 
-**Dependency on #95 is the blocking constraint.** Today, `src/wikimind/engine/compiler.py` writes `[[Title]]` strings into article markdown bodies based on LLM-guessed `backlink_suggestions`, but **it never creates any `Backlink` table rows**. A grep for `Backlink` against `compiler.py` returns zero hits. The `Backlink` table is effectively empty in any real deployment. Issue #95 is the fix: resolve wikilinks at compile time against the actual article set and persist resolved ones as real `Backlink` rows. Without #95, Epic 3's graph renders as a scatter plot of disconnected dots. **#95 must merge before Epic 3 implementation starts.**
+**Dependency on #95 is the blocking constraint.** Today, `src/wikimind/engine/compiler.py` writes `Title` strings into article markdown bodies based on LLM-guessed `backlink_suggestions`, but **it never creates any `Backlink` table rows**. A grep for `Backlink` against `compiler.py` returns zero hits. The `Backlink` table is effectively empty in any real deployment. Issue #95 is the fix: resolve wikilinks at compile time against the actual article set and persist resolved ones as real `Backlink` rows. Without #95, Epic 3's graph renders as a scatter plot of disconnected dots. **#95 must merge before Epic 3 implementation starts.**
 
 ## 2. Current state
 
@@ -36,7 +36,7 @@ Three fields only: `source_article_id`, `target_article_id`, `context`. No `rela
 
 `Article` has ORM-side eager-loading helpers (`backlinks_in`, `backlinks_out`) via `selectin` loading, which is what `get_graph` walks.
 
-**Populated in practice?** No. The compiler writes `[[Title]]` strings into the article markdown but never touches the `Backlink` table. The eager-loaded `backlinks_out` lists are empty for every article compiled today. This is exactly what #95 fixes.
+**Populated in practice?** No. The compiler writes `Title` strings into the article markdown but never touches the `Backlink` table. The eager-loaded `backlinks_out` lists are empty for every article compiled today. This is exactly what #95 fixes.
 
 ### 2b. `GET /wiki/graph` API
 
@@ -265,7 +265,7 @@ Keyboard shortcuts are a nice-to-have for the MVP. Gate them behind the global c
 
 **Empty state** (zero articles): friendly "Your graph is empty. Ingest a source to start building your wiki." with a link to `/inbox`.
 
-**Sparse state** (articles exist but no edges): the graph renders as a cloud of dots. Show a banner: "Your wiki has {N} articles but no backlinks yet. Backlinks are created when compiled articles cross-reference each other via `[[wikilinks]]`." This is the cold-start reality until #95 is live **and** the user has compiled enough articles for cross-references to emerge.
+**Sparse state** (articles exist but no edges): the graph renders as a cloud of dots. Show a banner: "Your wiki has {N} articles but no backlinks yet. Backlinks are created when compiled articles cross-reference each other via `wikilinks`." This is the cold-start reality until #95 is live **and** the user has compiled enough articles for cross-references to emerge.
 
 ### 5f. Performance thresholds
 

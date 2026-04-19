@@ -179,16 +179,16 @@ main = "src/index.ts"
 compatibility_date = "${workerConfig.compatibilityDate}"
 compatibility_flags = ${JSON.stringify(workerConfig.compatibilityFlags)}
 
-[[kv_namespaces]]
+kv_namespaces
 binding = "MY_KV"
 id = "${kv.id}"
 
-[[d1_databases]]
+d1_databases
 binding = "DB"
 database_id = "${db.id}"
 database_name = "${db.name}"
 
-[[r2_buckets]]
+r2_buckets
 binding = "MY_BUCKET"
 bucket_name = "${bucket.name}"
 EOF`,

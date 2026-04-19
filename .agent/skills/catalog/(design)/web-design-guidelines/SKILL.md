@@ -13,7 +13,7 @@ Review files for compliance with Web Interface Guidelines.
 
 ## How It Works
 
-1. Read the guidelines from `#[[file:references/guideline.md]]`
+1. Read the guidelines from `#file:references/guideline.md`
 2. Read the specified files (or prompt user for files/pattern)
 3. Check against all rules in the guidelines
 4. Output findings in the terse `file:line` format
@@ -23,7 +23,7 @@ Review files for compliance with Web Interface Guidelines.
 All rules and output format instructions are in:
 
 ```
-#[[file:references/guideline.md]]
+#file:references/guideline.md
 ```
 
 The guidelines cover:

@@ -68,7 +68,7 @@ const client = new Anthropic({
 # wrangler.toml
 [ai]
 binding = "AI"
-[[ai.gateway]]
+ai.gateway
 id = "my-gateway"
 ```
 

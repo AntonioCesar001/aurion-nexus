@@ -224,13 +224,13 @@ turn_count: <N>
 
 <answer>
 
-**Sources:** [[Article 1]], [[Article 2]]
+**Sources:** Article 1, Article 2
 
 ## Q2: <follow-up question>
 
 <answer>
 
-**Sources:** [[Article 3]]
+**Sources:** Article 3
 
 ...
 ```

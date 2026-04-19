@@ -34,7 +34,7 @@ const result = await env.DB.prepare('UPDATE users SET last_login = ? WHERE id = 
 
 // .raw() - Returns array of arrays (efficient for large datasets)
 const rawResults = await env.DB.prepare('SELECT id, name FROM users').raw()
-// [[1, 'Alice'], [2, 'Bob']]
+// 1, 'Alice'], [2, 'Bob'
 ```
 
 ## Batch Operations

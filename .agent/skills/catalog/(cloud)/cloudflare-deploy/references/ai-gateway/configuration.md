@@ -22,7 +22,7 @@ curl -X POST https://api.cloudflare.com/client/v4/accounts/{account_id}/ai-gatew
 [ai]
 binding = "AI"
 
-[[ai.gateway]]
+ai.gateway
 id = "my-gateway"
 ```
 

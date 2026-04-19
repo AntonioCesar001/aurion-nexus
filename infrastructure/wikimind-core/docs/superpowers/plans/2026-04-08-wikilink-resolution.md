@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Resolve `[[wikilinks]]` at compile time (not render time), produce real `Backlink` rows in the database, and close issues #95 and #96 in a single PR. Sets the table for Epic 3 (knowledge graph view) by populating the `Backlink` table for the first time.
+**Goal:** Resolve `wikilinks` at compile time (not render time), produce real `Backlink` rows in the database, and close issues #95 and #96 in a single PR. Sets the table for Epic 3 (knowledge graph view) by populating the `Backlink` table for the first time.
 
 **Architecture:** One PR. Adds a deterministic title-normalization module, a pure resolution helper, a compiler post-processing step, a superset article lookup (ID-or-slug), and a frontend simplification that deletes the local slugifier. The spec lives at `docs/superpowers/specs/2026-04-08-wikilink-resolution-design.md` — read it before starting.
 
@@ -19,7 +19,7 @@ This plan implements the full spec except the backfill step, which is explicitly
 | Two-stage deterministic resolution (exact → normalized), no fuzzy | Spec § Resolution algorithm |
 | `Backlink` model reused as-is (composite PK already exists) | Spec § Current state |
 | `Backlink` rows created at compile time, not render time | Spec § Compiler post-processing pipeline |
-| Markdown uses `[text](/wiki/<id>)` for resolved, `[[text]]` for unresolved (Option B) | Spec § Markdown generation |
+| Markdown uses `[text](/wiki/<id>)` for resolved, `text` for unresolved (Option B) | Spec § Markdown generation |
 | Article lookup accepts ID or slug (ID first, slug fallback) | Spec § Backend: article lookup accepts ID or slug |
 | Frontend deletes its local slugifier — single normalizer in one module | Spec § The single normalizer — drift prevention |
 | Unresolved candidates NOT persisted — the markdown body is the record (Option C) | Spec § Storage — where do resolution results live? |
@@ -753,9 +753,9 @@ async def test_save_markdown_has_resolved_link_and_unresolved_bracket(
     # Resolved link uses the article ID
     assert f"[Existing Article](/wiki/{target.id})" in content
     # Unresolved candidate stays as Obsidian brackets
-    assert "[[Nonexistent Topic]]" in content
-    # The old-style "- [[Existing Article]]" format is gone for the resolved one
-    assert "- [[Existing Article]]" not in content
+    assert "Nonexistent Topic" in content
+    # The old-style "- Existing Article" format is gone for the resolved one
+    assert "- Existing Article" not in content
 
 
 @pytest.mark.asyncio
@@ -808,7 +808,7 @@ async def test_save_skips_backlinks_when_no_candidates(
 .venv/bin/pytest tests/unit/test_compiler.py -v
 ```
 
-Expected: FAIL. The current `_create_article` does not call the resolver and does not write `Backlink` rows. The markdown assertion about `[Existing Article](/wiki/<id>)` also fails because the current writer emits `[[Existing Article]]`.
+Expected: FAIL. The current `_create_article` does not call the resolver and does not write `Backlink` rows. The markdown assertion about `[Existing Article](/wiki/<id>)` also fails because the current writer emits `Existing Article`.
 
 - [ ] **Step 3: Update the compiler**
 
@@ -985,7 +985,7 @@ def _write_article_file(
 
     The "Related" section emits standard markdown links for resolved
     wikilinks (``[Text](/wiki/<article_id>)``) and Obsidian-style
-    brackets only for unresolved candidates (``[[Text]]``). The
+    brackets only for unresolved candidates (``Text``). The
     frontend's ArticleReader distinguishes the two at render time:
     resolved become React Router links, unresolved become dimmed spans.
     """
@@ -1004,7 +1004,7 @@ def _write_article_file(
     for rb in resolved:
         related_lines.append(f"- [{rb.candidate_text}](/wiki/{rb.target_id})")
     for text in unresolved:
-        related_lines.append(f"- [[{text}]]")
+        related_lines.append(f"- {text}")
     backlinks = "\n".join(related_lines)
 
     claims = "\n".join(
@@ -1259,7 +1259,7 @@ git commit -m "feat(wiki): accept article ID or slug in get_article lookup (#95)
 - Modify: `apps/web/src/components/wiki/ArticleReader.tsx`
 - Modify: `apps/web/src/index.css` (or whichever global stylesheet is imported by the app — verify via grep first)
 
-This is the client-side counterpart to the backend fix. The frontend no longer slugifies anything. Resolved wikilinks arrive as standard markdown links (`[text](/wiki/<id>)`), handled natively by react-markdown. Unresolved wikilinks stay as `[[text]]` in the markdown body and are replaced with a dimmed span before react-markdown ever sees them.
+This is the client-side counterpart to the backend fix. The frontend no longer slugifies anything. Resolved wikilinks arrive as standard markdown links (`[text](/wiki/<id>)`), handled natively by react-markdown. Unresolved wikilinks stay as `text` in the markdown body and are replaced with a dimmed span before react-markdown ever sees them.
 
 - [ ] **Step 1: Find the global stylesheet**
 
@@ -1307,7 +1307,7 @@ function escapeHtml(s: string): string {
 
 // Pre-process the markdown to:
 //   1. Strip the YAML frontmatter block emitted by the compiler.
-//   2. Convert unresolved [[wikilinks]] — which is all the compiler
+//   2. Convert unresolved wikilinks — which is all the compiler
 //      emits for links it could NOT resolve against the article table —
 //      into a dimmed span. Resolved wikilinks arrive as standard
 //      markdown links [text](/wiki/<id>) and need no preprocessing.
@@ -1581,7 +1581,7 @@ async def test_wikilink_resolution_end_to_end(async_session, tmp_path, monkeypat
     # 4. Markdown has the resolved link by ID and the unresolved bracket
     content = Path(article.file_path).read_text()
     assert f"[Existing Target](/wiki/{target.id})" in content
-    assert "[[Nonexistent Topic]]" in content
+    assert "Nonexistent Topic" in content
 
     # 5. ID-first lookup via the HTTP route returns the new article
     transport = ASGITransport(app=app)
@@ -1628,7 +1628,7 @@ git commit -m "test(integration): end-to-end wikilink resolution proof (#95)"
 
 **This task is a STOP marker. Do NOT write code.**
 
-Tasks 1–7 implement the forward-only fix: new compiles get real `Backlink` rows and resolved markdown links. Existing articles on disk still contain the old `[[Title]]` text in their "Related" sections — they will render as unresolved (dimmed) spans until the underlying article is re-compiled.
+Tasks 1–7 implement the forward-only fix: new compiles get real `Backlink` rows and resolved markdown links. Existing articles on disk still contain the old `Title` text in their "Related" sections — they will render as unresolved (dimmed) spans until the underlying article is re-compiled.
 
 The spec (§ Backfill strategy) flagged three options for what to do about pre-existing articles. Each has different PR-level impact. **The plan explicitly does NOT pick one.**
 
@@ -1641,13 +1641,13 @@ The spec (§ Backfill strategy) flagged three options for what to do about pre-e
 - **PR-level impact:** +1 job module, +1 startup hook or admin endpoint, nontrivial test surface. **Moderate-large change.**
 
 **Option B2 — Forward only.**
-- Ship this plan (Tasks 1–7) as-is. New articles get real backlinks. Existing articles keep unresolved `[[Title]]` text until re-ingested.
+- Ship this plan (Tasks 1–7) as-is. New articles get real backlinks. Existing articles keep unresolved `Title` text until re-ingested.
 - **Pro:** Zero disruption. Zero LLM cost. Deterministic. Simplest rollout.
 - **Con:** The knowledge graph starts sparse. Existing articles' "Related" sections stay dimmed until the user triggers a recompile.
 - **PR-level impact:** **Zero.** This is "do nothing extra" beyond Tasks 1–7. This plan IS B2.
 
 **Option B3 — Incremental resolution sweep job.**
-- Add a background job `wikilink_resolution_sweep` that walks existing articles, parses `[[Title]]` tokens from each `.md` file, runs them through the SAME `resolve_backlink_candidates` helper (no LLM call), and — if resolution succeeds now — rewrites the line in the .md file and creates a `Backlink` row.
+- Add a background job `wikilink_resolution_sweep` that walks existing articles, parses `Title` tokens from each `.md` file, runs them through the SAME `resolve_backlink_candidates` helper (no LLM call), and — if resolution succeeds now — rewrites the line in the .md file and creates a `Backlink` row.
 - **Pro:** Eventually-consistent knowledge graph. No LLM cost. Re-runnable on a timer or after each ingest.
 - **Con:** Most code of the three options. New job module, new tests, new scheduling hook, new markdown-round-trip edge cases (idempotency, file lock contention).
 - **PR-level impact:** **Moderate.** One new file in `src/wikimind/jobs/`, new tests, a small hook in the ingest-complete signal. Orthogonal to this plan — can ship as a separate follow-up PR.
@@ -1683,7 +1683,7 @@ The PR is ready to land when:
 
 1. `make verify` is green.
 2. The integration test `test_wikilink_resolution_end_to_end` passes in CI.
-3. A fresh compile on a dev wiki produces a `.md` file whose "Related" section has both kinds of links — `[text](/wiki/<id>)` for resolved and `[[text]]` for unresolved — and the `backlink` table gains rows for the resolved entries.
+3. A fresh compile on a dev wiki produces a `.md` file whose "Related" section has both kinds of links — `[text](/wiki/<id>)` for resolved and `text` for unresolved — and the `backlink` table gains rows for the resolved entries.
 4. Clicking a resolved link in the frontend navigates to the target article without a 404.
 5. `WikiService.get_graph` returns a non-empty `edges` list for the first time in the project's history.
 

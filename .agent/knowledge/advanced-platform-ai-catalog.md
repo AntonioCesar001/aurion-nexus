@@ -5,7 +5,7 @@ Este documento fornece referências arquiteturais sólidas (Gold Standards) para
 ## 🧠 IA Interpretation Guidelines
 1. **Model Evolution**: O agente deve consultar o repositório se precisar implementar uma nova técnica de RAG ou compressão de contexto.
 2. **Safety First**: Repositórios de AI Safety (ex: Garak, NeMo) devem ser consultados pelo agente **Shield** antes de deploys em produção.
-3. **Skill Link**: Cross-reference com o catálogo de skills em [[.agent/skills/catalog/(security)/README.md]].
+3. **Skill Link**: Cross-reference com o catálogo de skills em [[.agent/skills/catalog/(quality)/react-best-practices/README.md]].
 
 ## Fase 1 — Fundação adicional de arquitetura e borda
 

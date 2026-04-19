@@ -410,7 +410,7 @@ primary_region = "iad"
     hard_limit = 100
     soft_limit = 80
 
-[[vm]]
+vm
   memory = "1gb"
   cpu_kind = "shared"
   cpus = 1

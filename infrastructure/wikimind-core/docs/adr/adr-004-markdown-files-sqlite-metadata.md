@@ -50,8 +50,8 @@ architecture but loses human readability, git-friendliness, and the ability to
 edit articles with any text editor. Users could not `grep` their knowledge base
 or diff changes over time.
 
-**Obsidian vault format** -- Use Obsidian's `[[wikilink]]` convention. We
-actually do use `[[backlink]]` syntax in the Related section, but we chose not
+**Obsidian vault format** -- Use Obsidian's `wikilink` convention. We
+actually do use `backlink` syntax in the Related section, but we chose not
 to couple the entire storage format to Obsidian. Our frontmatter schema is
 richer (confidence levels, source attribution) and we need SQLite for query
 performance.

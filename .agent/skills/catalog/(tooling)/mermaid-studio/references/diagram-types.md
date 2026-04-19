@@ -43,7 +43,7 @@ G[\Reverse parallel\]  %% Manual operation
 H[(Database)]          %% Data store
 I((Circle))            %% Connector
 J>Asymmetric]          %% Flag/signal
-K[[Subroutine]]        %% Predefined process
+KSubroutine        %% Predefined process
 L(((Double Circle)))   %% Multiple documents
 M[/Trapezoid\]         %% Manual input
 N[\Inverse trapezoid/] %% Display

@@ -21,7 +21,7 @@
 **wrangler.toml** (alternative):
 
 ```toml
-[[secrets_store_secrets]]
+secrets_store_secrets
 binding = "API_KEY"
 store_id = "abc123"
 secret_name = "stripe_api_key"
@@ -66,13 +66,13 @@ Fields:
 
 ```toml
 [env.production]
-[[env.production.secrets_store_secrets]]
+env.production.secrets_store_secrets
 binding = "API_KEY"
 store_id = "prod-store"
 secret_name = "prod_api_key"
 
 [env.staging]
-[[env.staging.secrets_store_secrets]]
+env.staging.secrets_store_secrets
 binding = "API_KEY"
 store_id = "staging-store"
 secret_name = "staging_api_key"

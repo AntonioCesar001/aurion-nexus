@@ -24,6 +24,7 @@ from wikimind.ingest.service import _DOCLING_AVAILABLE, _get_docling_converter
 from wikimind.middleware.auth import AuthMiddleware
 from wikimind.middleware.correlation import CorrelationIdMiddleware
 from wikimind.middleware.error_handling import ErrorHandlingMiddleware
+from wikimind.middleware.local_only import LocalOnlyMiddleware
 from wikimind.middleware.logging_config import configure_logging
 from wikimind.middleware.request_logging import RequestLoggingMiddleware
 from wikimind.middleware.security_headers import SecurityHeadersMiddleware
@@ -54,7 +55,11 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     settings.ensure_dirs()
 
-    log.info("WikiMind gateway starting", port=settings.gateway_port)
+    log.info("WikiMind gateway starting", port=settings.gateway_port, host=settings.server.host)
+    if not settings.auth.enabled:
+        log.warning("SECURITY ALERT: Authentication is DISABLED. Ensure API is restricted to localhost.", 
+                    host=settings.server.host)
+    
     await init_db()
     await _apply_db_preferences()
     log.info("Database initialized")
@@ -114,6 +119,7 @@ app.add_middleware(ErrorHandlingMiddleware)
 app.add_middleware(AuthMiddleware)
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(CorrelationIdMiddleware)
+app.add_middleware(LocalOnlyMiddleware)
 
 # Allow Electron renderer and web dev server to connect
 app.add_middleware(

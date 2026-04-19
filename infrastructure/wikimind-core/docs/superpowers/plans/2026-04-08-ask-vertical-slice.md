@@ -622,8 +622,8 @@ def test_serializer_renders_sources_as_wikilinks():
     queries = [_q("Q?", "A.", turn_index=0, sources='["Article One", "Article Two"]')]
     md = serialize_conversation_to_markdown(conv, queries)
 
-    assert "[[Article One]]" in md
-    assert "[[Article Two]]" in md
+    assert "Article One" in md
+    assert "Article Two" in md
 
 
 def test_serializer_handles_empty_sources():
@@ -727,7 +727,7 @@ def serialize_conversation_to_markdown(
         # Sources block — omitted if no sources
         sources = _parse_sources(query.source_article_ids)
         if sources:
-            lines.append("**Sources:** " + ", ".join(f"[[{s}]]" for s in sources))
+            lines.append("**Sources:** " + ", ".join(f"{s}" for s in sources))
             lines.append("")
 
     return "\n".join(lines).rstrip() + "\n"
@@ -1982,14 +1982,14 @@ async def test_filed_back_conversation_is_retrievable_by_next_query(test_session
     canned_responses = iter(
         [
             {
-                "answer": "The Karpathy loop is documented in [[Fixture Source]]. It compounds explorations.",
+                "answer": "The Karpathy loop is documented in Fixture Source. It compounds explorations.",
                 "confidence": "high",
                 "sources": ["Fixture Source"],
                 "related_articles": [],
                 "follow_up_questions": [],
             },
             {
-                "answer": "Per [[How does the Karpathy loop work?]], the loop compounds explorations.",
+                "answer": "Per How does the Karpathy loop work?, the loop compounds explorations.",
                 "confidence": "high",
                 "sources": ["How does the Karpathy loop work?"],
                 "related_articles": [],

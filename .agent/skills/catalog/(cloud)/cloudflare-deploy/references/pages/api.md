@@ -6,11 +6,11 @@
 /functions/index.ts              → example.com/
 /functions/api/users.ts          → example.com/api/users
 /functions/api/users/[id].ts     → example.com/api/users/:id
-/functions/api/users/[[path]].ts → example.com/api/users/* (catchall)
+/functions/api/users/path.ts → example.com/api/users/* (catchall)
 /functions/_middleware.ts        → Runs before all routes
 ```
 
-**Rules**: `[param]` = single segment, `[[param]]` = multi-segment catchall, more specific wins.
+**Rules**: `[param]` = single segment, `param` = multi-segment catchall, more specific wins.
 
 ## Request Handlers
 
@@ -67,7 +67,7 @@ export const onRequestGet: PagesFunction = async ({ params }) => {
   return Response.json({ userId: params.id })
 }
 
-// Multi-segment: functions/files/[[path]].ts
+// Multi-segment: functions/files/path.ts
 export const onRequestGet: PagesFunction = async ({ params }) => {
   // /files/docs/api/v1.md → params.path = ["docs", "api", "v1.md"]
   const filePath = (params.path as string[]).join('/')

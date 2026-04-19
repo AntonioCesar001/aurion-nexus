@@ -197,7 +197,7 @@ Create a `netlify.toml` file in your repo root:
   command = "npm run build"
   publish = "dist"
 
-[[redirects]]
+redirects
   from = "/*"
   to = "/index.html"
   status = 200
@@ -302,7 +302,7 @@ npx netlify init
 2. **Use caching headers** for static assets:
 
    ```toml
-   [[headers]]
+   headers
      for = "/assets/*"
      [headers.values]
        Cache-Control = "public, max-age=31536000, immutable"

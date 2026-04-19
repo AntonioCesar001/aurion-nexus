@@ -10,7 +10,7 @@ interface EventContext<Env = any> {
   passThroughOnException(): void // Fallback to static on error
   next(input?: Request | string, init?: RequestInit): Promise<Response>
   env: Env // Bindings, vars, secrets
-  params: Record<string, string | string[]> // Route params ([user] or [[catchall]])
+  params: Record<string, string | string[]> // Route params ([user] or catchall)
   data: any // Middleware shared state
 }
 ```

@@ -7,14 +7,14 @@
 
 ## Context
 
-Every `[[wikilink]]` in a compiled article currently 404s (issue #95). The compiler's JSON prompt contract asks the LLM for a `backlink_suggestions` list of "related concepts that likely exist in the wiki" (`src/wikimind/engine/compiler.py:52`) and the compiler writes those titles verbatim into the "Related" section as `[[Title]]` markdown (`src/wikimind/engine/compiler.py:333`). Nothing verifies that the target exists, no `Backlink` row is created, and the React `ArticleReader` then slugifies the link text client-side and fetches `/wiki/articles/{slug}`, which fails for two reasons: (a) the LLM hallucinates titles that were never compiled, and (b) even when a target exists, the frontend's homemade regex slugifier and the backend's `python-slugify` library disagree on unicode, underscores, and apostrophes — the slug divergence tracked as #96. The user-visible impact is that the "Related" section is entirely broken: every link is a dead link, there are no real backlinks anywhere in the knowledge base, and the primitive Epic 3 (knowledge graph view) depends on — real `Backlink` rows the compiler does not currently emit.
+Every `wikilink` in a compiled article currently 404s (issue #95). The compiler's JSON prompt contract asks the LLM for a `backlink_suggestions` list of "related concepts that likely exist in the wiki" (`src/wikimind/engine/compiler.py:52`) and the compiler writes those titles verbatim into the "Related" section as `Title` markdown (`src/wikimind/engine/compiler.py:333`). Nothing verifies that the target exists, no `Backlink` row is created, and the React `ArticleReader` then slugifies the link text client-side and fetches `/wiki/articles/{slug}`, which fails for two reasons: (a) the LLM hallucinates titles that were never compiled, and (b) even when a target exists, the frontend's homemade regex slugifier and the backend's `python-slugify` library disagree on unicode, underscores, and apostrophes — the slug divergence tracked as #96. The user-visible impact is that the "Related" section is entirely broken: every link is a dead link, there are no real backlinks anywhere in the knowledge base, and the primitive Epic 3 (knowledge graph view) depends on — real `Backlink` rows the compiler does not currently emit.
 
 ## Current state
 
 | Concern | Location |
 |---|---|
 | LLM prompt asks for `backlink_suggestions` strings | `src/wikimind/engine/compiler.py:52` |
-| Compiler writes verbatim `[[title]]` to markdown "Related" section | `src/wikimind/engine/compiler.py:333` (inside `_write_article_file`) |
+| Compiler writes verbatim `title` to markdown "Related" section | `src/wikimind/engine/compiler.py:333` (inside `_write_article_file`) |
 | `Backlink` SQLModel table **already exists** (composite PK `source_article_id` + `target_article_id`, optional `context` snippet) | `src/wikimind/models.py:157` |
 | `Backlink` has NO `id` field — composite primary key is `(source_article_id, target_article_id)` | `src/wikimind/models.py:160-162` |
 | Compiler **never writes `Backlink` rows** — grep `session.add(Backlink(...))` returns nothing | codebase-wide |
@@ -27,7 +27,7 @@ Key finding: **the `Backlink` model already exists but is never populated**. The
 
 ## Goals
 
-1. Every `[[wikilink]]` rendered in an article body is either (a) a clickable link to an existing article or (b) visually marked as unresolved and non-clickable. No more silent 404s.
+1. Every `wikilink` rendered in an article body is either (a) a clickable link to an existing article or (b) visually marked as unresolved and non-clickable. No more silent 404s.
 2. Resolved links produce **real `Backlink` rows** in the database at compile time. The knowledge graph primitive that Epic 3 needs becomes populated on the very next compile.
 3. The frontend stops doing client-side slugification. Resolved links travel by article ID, not by slug — sidesteps issue #96 entirely.
 4. Both issue #95 (broken wikilinks) and issue #96 (slug divergence) are closed by this work. #96 becomes subsumed: if the frontend never slugifies, the two slugifiers can never drift.
@@ -125,7 +125,7 @@ Because `Backlink` uses a composite PK, duplicate (source, target) pairs are rej
 |---|---|---|---|
 | **A** | JSON column on `Article` row — `unresolved_backlinks TEXT` (JSON array) | Queryable, survives round trip from disk | New schema column, new migration, one more field to keep in sync with the disk markdown |
 | **B** | New `UnresolvedBacklink` table with `(article_id, candidate_text)` rows | Cleanest relational model, easy to query "what candidates never resolved across my wiki" | Whole new table for data that is essentially a TODO list, more surface for bugs, Epic 3 doesn't need it |
-| **C** | **Not persisted at all.** The markdown body contains the unresolved `[[Title]]` text, the frontend renders it as a dimmed span, done. | Zero schema change. Single source of truth (the .md file). Re-compiling an article re-derives unresolved state from the same .md output. Trivial to revisit later if we decide we DO want querying. | Can't write a SQL query like "show me all dead links in the wiki" without scanning markdown files |
+| **C** | **Not persisted at all.** The markdown body contains the unresolved `Title` text, the frontend renders it as a dimmed span, done. | Zero schema change. Single source of truth (the .md file). Re-compiling an article re-derives unresolved state from the same .md output. Trivial to revisit later if we decide we DO want querying. | Can't write a SQL query like "show me all dead links in the wiki" without scanning markdown files |
 
 **Recommendation: Option C.** For a v1 that closes the loop, persisting unresolved candidates buys us nothing the markdown body doesn't already carry. The incremental-sweep backfill job (option B3 below) is the natural place to resolve old unresolved links over time — and it only needs the markdown text, not a separate table. Flagged as an open decision in case the user wants A or B for future flexibility.
 
@@ -133,11 +133,11 @@ Because `Backlink` uses a composite PK, duplicate (source, target) pairs are rej
 
 Two options considered:
 
-**Option A — custom marker syntax.** Emit `[[Title|resolved]]` vs `[[Title|unresolved]]`. Requires a custom parser on the frontend (react-markdown doesn't understand the `|resolved` suffix). Keeps Obsidian-style brackets for both cases.
+**Option A — custom marker syntax.** Emit `resolved` vs `unresolved`. Requires a custom parser on the frontend (react-markdown doesn't understand the `|resolved` suffix). Keeps Obsidian-style brackets for both cases.
 
-**Option B — standard markdown link for resolved, Obsidian brackets for unresolved.** Emit `[Title](/wiki/<article_id>)` for resolved, `[[Title]]` for unresolved. react-markdown renders the former as a native `<a>` tag with zero custom code. The latter is picked up by a simple pre-processor on the frontend that converts unresolved `[[...]]` to a dimmed span before react-markdown ever sees it.
+**Option B — standard markdown link for resolved, Obsidian brackets for unresolved.** Emit `[Title](/wiki/<article_id>)` for resolved, `Title` for unresolved. react-markdown renders the former as a native `<a>` tag with zero custom code. The latter is picked up by a simple pre-processor on the frontend that converts unresolved `[[...]]` to a dimmed span before react-markdown ever sees it.
 
-**Recommendation: Option B.** Standard markdown links work natively with react-markdown and remark-gfm (both already in the deps). No custom parser. No `data-wikilink` attribute hack. The only frontend code is a one-line preprocessing regex that replaces `[[Foo]]` with `<span class="wikilink-unresolved" title="not yet in wiki">Foo</span>`.
+**Recommendation: Option B.** Standard markdown links work natively with react-markdown and remark-gfm (both already in the deps). No custom parser. No `data-wikilink` attribute hack. The only frontend code is a one-line preprocessing regex that replaces `Foo` with `<span class="wikilink-unresolved" title="not yet in wiki">Foo</span>`.
 
 **The "Related" section is rebuilt from resolution output, not the raw LLM list.** In `_write_article_file`, the `backlinks` block becomes:
 
@@ -147,7 +147,7 @@ related_lines: list[str] = []
 for rb in resolved_backlinks:
     related_lines.append(f"- [{rb.candidate_text}](/wiki/{rb.target_id})")
 for text in unresolved_backlinks:
-    related_lines.append(f"- [[{text}]]")
+    related_lines.append(f"- {text}")
 backlinks = "\n".join(related_lines)
 ```
 
@@ -209,7 +209,7 @@ Walk every `Article` row, re-run the compiler on the original `Source`, let the 
 
 #### Option B2 — Forward only
 
-New articles get real backlinks. Existing articles keep their unresolved `[[Title]]` text until they happen to be re-ingested for another reason.
+New articles get real backlinks. Existing articles keep their unresolved `Title` text until they happen to be re-ingested for another reason.
 
 - **Pro:** Zero disruption. Zero LLM cost. Deterministic. Simplest possible rollout.
 - **Con:** The knowledge graph starts sparse (Epic 3's graph view shows near-empty edges for the first week or two). Existing articles' "Related" sections stay broken forever for users who never re-ingest.
@@ -217,9 +217,9 @@ New articles get real backlinks. Existing articles keep their unresolved `[[Titl
 
 #### Option B3 — Incremental resolution sweep (recommended long term)
 
-Add a background job `wikilink_resolution_sweep` (new file in `src/wikimind/jobs/`) that walks existing articles, reads each `.md` file, finds the `[[Title]]` tokens, runs them through the exact same `resolve_backlink_candidates()` function, and — if resolution succeeds now for a link that used to be unresolved — rewrites that one line in the .md file AND creates a `Backlink` row. No LLM call. Pure deterministic resolution against the current `Article` table.
+Add a background job `wikilink_resolution_sweep` (new file in `src/wikimind/jobs/`) that walks existing articles, reads each `.md` file, finds the `Title` tokens, runs them through the exact same `resolve_backlink_candidates()` function, and — if resolution succeeds now for a link that used to be unresolved — rewrites that one line in the .md file AND creates a `Backlink` row. No LLM call. Pure deterministic resolution against the current `Article` table.
 
-- **Pro:** Eventually-consistent knowledge graph. No LLM cost. Re-runnable on a timer (e.g. every ingestion, or nightly). When a user adds an article titled "Quantum Computing", every prior article that linked `[[Quantum Computing]]` as unresolved gets its link upgraded automatically on the next sweep.
+- **Pro:** Eventually-consistent knowledge graph. No LLM cost. Re-runnable on a timer (e.g. every ingestion, or nightly). When a user adds an article titled "Quantum Computing", every prior article that linked `Quantum Computing` as unresolved gets its link upgraded automatically on the next sweep.
 - **Con:** Most code of the three options. New job, new tests, new scheduling decision. May miss nuanced context the LLM had when it originally produced the candidate (but since we're only promoting EXACT and NORMALIZED matches, "nuance" shouldn't matter).
 - **PR-level impact:** Moderate. New job module, new tests, a small hook in the ingest-complete signal. But orthogonal to this spec's main work — the sweep job can be a separate follow-up PR.
 
@@ -236,7 +236,7 @@ Add a background job `wikilink_resolution_sweep` (new file in `src/wikimind/jobs
 | **Fuzzy matching with Levenshtein or trigrams** | False-positive risk is too high for a knowledge base. "React" → "React Native" looks fuzzy-close and is semantically distinct. Any threshold tight enough to avoid that is equivalent to exact match. |
 | **Embedding-based matching** | Scope creep into Epic 3 (graph building) and Epic 5 (retrieval overhaul). Also introduces a dependency on the embedding model being stable across runs. Reconsider when embeddings land for retrieval anyway. |
 | **Change the prompt contract to ask the LLM for structured entities + relation types** | Much bigger change. Requires a Pydantic schema change, prompt validation updates, and retraining every downstream code path that consumes `CompilationResult`. Does not address the core bug (which is post-processing, not prompt quality). |
-| **Drop the `[[Title]]` syntax and stop producing wikilinks altogether** | Loses the entire "related concepts" affordance in the reader. The feature is user-valuable when it works. |
+| **Drop the `Title` syntax and stop producing wikilinks altogether** | Loses the entire "related concepts" affordance in the reader. The feature is user-valuable when it works. |
 
 ## Consequences
 

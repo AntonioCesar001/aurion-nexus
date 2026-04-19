@@ -7,7 +7,7 @@ Para garantir a interpretação correta deste catálogo:
 1. **Consultation**: O agente deve abrir o link do GitHub se a descrição abaixo for insuficiente para a decisão atual.
 2. **Context Anchor**: Toda decisão de arquitetura deve citar o repositório deste catálogo que a fundamenta.
 3. **Deep Dive**: Use a ferramenta `read_url_content` para ler o `README.md` do repositório alvo se precisar de exemplos de implementação específicos.
-4. **Graph Sync**: Garanta que os links internos em [[.agent/skills/catalog/(architecture)/README.md]] sejam respeitados.
+4. **Graph Sync**: Garanta que os links internos em [[.agent/skills/catalog/(architecture)/domain-analysis/README.md]] sejam respeitados.
 
 ## Fase 1 — Fundação adicional da engenharia
 

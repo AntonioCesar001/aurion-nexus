@@ -191,7 +191,7 @@ export function run(input) {
 ```toml
 api_version = "2026-01"
 
-[[extensions]]
+extensions
 name = "VIP Discount"
 handle = "vip-discount"
 type = "function"

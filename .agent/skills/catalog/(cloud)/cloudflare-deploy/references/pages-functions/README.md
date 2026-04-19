@@ -40,7 +40,7 @@ Framework-based?
   ├── users/
   │   ├── index.js          → /users/
   │   ├── [user].js         → /users/:user
-  │   └── [[catchall]].js   → /users/*
+  │   └── catchall.js   → /users/*
   └── _middleware.js        → runs on all routes
 ```
 
@@ -63,10 +63,10 @@ export function onRequest(context) {
 // Matches: /users/nevi
 ```
 
-**Multi-segment** `[[param]]` → array:
+**Multi-segment** `param` → array:
 
 ```js
-// /functions/users/[[catchall]].js
+// /functions/users/catchall.js
 export function onRequest(context) {
   return new Response(JSON.stringify(context.params.catchall))
 }

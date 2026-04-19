@@ -68,7 +68,7 @@ redirect_urls = [
 [webhooks]
 api_version = "2026-01"
 
-[[webhooks.subscriptions]]
+webhooks.subscriptions
 topics = ["products/create", "products/update"]
 uri = "/webhooks"
 ```
@@ -722,7 +722,7 @@ main = "build/index.js"
 [vars]
 SHOPIFY_API_KEY = "your_api_key"
 
-[[kv_namespaces]]
+kv_namespaces
 binding = "SESSIONS"
 id = "your_kv_namespace_id"
 ```

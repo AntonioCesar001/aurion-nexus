@@ -90,18 +90,18 @@ Netlify auto-detects frameworks, but you can override:
 ## Redirects and Rewrites
 
 ```toml
-[[redirects]]
+redirects
   from = "/old-path"
   to = "/new-path"
   status = 301
 
-[[redirects]]
+redirects
   from = "/api/*"
   to = "https://api.example.com/:splat"
   status = 200
 
 # SPA fallback (for client-side routing)
-[[redirects]]
+redirects
   from = "/*"
   to = "/index.html"
   status = 200
@@ -110,14 +110,14 @@ Netlify auto-detects frameworks, but you can override:
 ## Headers
 
 ```toml
-[[headers]]
+headers
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     Content-Security-Policy = "default-src 'self'"
 
-[[headers]]
+headers
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
@@ -154,7 +154,7 @@ Deploy different settings per context:
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-[[functions]]
+functions
   path = "/api/*"
   function = "api"
 ```
@@ -162,13 +162,13 @@ Deploy different settings per context:
 ## Build Plugins
 
 ```toml
-[[plugins]]
+plugins
   package = "@netlify/plugin-lighthouse"
 
   [plugins.inputs]
     output_path = "reports/lighthouse.html"
 
-[[plugins]]
+plugins
   package = "netlify-plugin-submit-sitemap"
 
   [plugins.inputs]
@@ -179,7 +179,7 @@ Deploy different settings per context:
 ## Edge Functions
 
 ```toml
-[[edge_functions]]
+edge_functions
   function = "geolocation"
   path = "/api/location"
 ```
@@ -214,7 +214,7 @@ Deploy different settings per context:
   command = "npm run build"
   publish = "dist"
 
-[[redirects]]
+redirects
   from = "/*"
   to = "/index.html"
   status = 200
@@ -232,13 +232,13 @@ Deploy different settings per context:
 ### Multiple Redirects with Country-Based Routing
 
 ```toml
-[[redirects]]
+redirects
   from = "/"
   to = "/uk"
   status = 302
   conditions = {Country = ["GB"]}
 
-[[redirects]]
+redirects
   from = "/"
   to = "/us"
   status = 302

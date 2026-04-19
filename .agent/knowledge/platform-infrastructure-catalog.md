@@ -6,7 +6,7 @@ Esta lista contém referências de infraestrutura, plataforma e SRE para orçame
 1. **Infrastructure as Code**: Se a tarefa envolver terraform ou k8s, consulte a Fase 2 antes de gerar manifestos.
 2. **Security & Secrets**: O agente **Shield** deve validar o uso de segredos baseado no [hashicorp/vault] deste catálogo.
 3. **Observation**: Use as referências de Monitoramento (Fase 3) para estruturar logs e status pages.
-4. **Linking**: Conecte com os protocolos de infra em [[.agent/skills/aurora/infra-deploy/SKILL.md]].
+4. **Linking**: Conecte com os protocolos de infra em [[.agent/skills/catalog/(cloud)/cloudflare-deploy/references/pages/README.md]].
 
 ## Fase 1 — Fundação adicional da plataforma e arquitetura
 

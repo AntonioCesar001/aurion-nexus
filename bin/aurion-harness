@@ -62,6 +62,7 @@ def check_harness_integrity():
         return True
 
 def main():
+    import sys
     if len(sys.argv) > 1 and sys.argv[1] == "--validate":
         success = check_harness_integrity()
         sys.exit(0 if success else 1)
