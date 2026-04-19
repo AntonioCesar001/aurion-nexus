@@ -10,14 +10,23 @@ The script creates a timestamped Markdown file inside .agent/knowledge/insights/
 and optionally pushes the content to the WikiMind Gateway for vectorization.
 """
 
-import sys
-import os
-import json
-import argparse
+import structlog
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
 from urllib import request, error
+
+
+# Configure structlog
+structlog.configure(
+    processors=[
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ]
+)
+log = structlog.get_logger()
+
 
 
 def slugify(text: str) -> str:
@@ -125,17 +134,23 @@ def main():
 
     # 1. Save to filesystem (Obsidian-visible)
     filepath = persist_to_file(args.title, content, tags)
-    print(f"💾 Insight saved: {filepath}")
+    log.info("insight_saved", path=str(filepath))
 
     # 2. Push to WikiMind (vectorization)
     if not args.no_wikimind:
         ok = push_to_wikimind(args.title, content)
         if ok:
-            print("🧠 Vectorized in WikiMind successfully.")
+            log.info("wikimind_sync_success")
         else:
-            print("⚠️  WikiMind not reachable — file saved locally only.")
+            log.warning("wikimind_sync_failed", message="WikiMind not reachable — file saved locally only")
 
-    print("✅ Knowledge persisted.")
+    # 3. Handle token usage logging for diagnostics
+    if hasattr(args, 'usage') and args.usage:
+        log.info("token_usage_captured", usage=args.usage)
+
+    log.info("knowledge_persisted")
+
+
 
 
 if __name__ == "__main__":

@@ -70,4 +70,5 @@ See [INSTALL.md](INSTALL.md) for a detailed setup guide.
 ---
 
 ## 📜 License
-Distribuído sob a licença MIT. Veja `LICENSE` para mais detalhes.
+Distributed under the MIT License. See `LICENSE` for more information.
+

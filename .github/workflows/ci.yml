@@ -1,0 +1,38 @@
+name: CI (Root)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff mypy pytest pytest-cov structlog python-slugify playwright
+          
+      - name: Lint with ruff
+        run: ruff check .
+        
+      - name: Type check with mypy
+        run: mypy .
+        
+      - name: Run shell-check
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './bin'
+          
+      - name: Health Check
+        run: ./bin/aurion health

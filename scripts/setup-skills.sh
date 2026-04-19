@@ -13,17 +13,17 @@ AURORA_SOURCE_DIR="$AURION_ROOT/.agent/skills/aurora"
 AURION_SOURCE_DIR="$AURION_ROOT/.agent/skills/aurion"
 CLAUDE_SOURCE="$AURION_ROOT/CLAUDE.md"
 
-safe_link() {
-    local src="$1"
-    local dest="$2"
-
     if [ "$src" = "$dest" ]; then
         echo "↷ Pulando self-link: $dest"
         return 0
     fi
 
-    ln -snf "$src" "$dest"
+    # Use relative symlink if possible
+    local rel_src
+    rel_src=$(python3 -c "import os; print(os.path.relpath('$src', '$(dirname "$dest")'))")
+    ln -snf "$rel_src" "$dest"
 }
+
 
 link_aurora_skills() {
     local skill_dir
@@ -44,13 +44,13 @@ link_aurion_skills() {
     echo "🔗 Vinculando blueprints estratégicos (Aurion)..."
     shopt -s nullglob
     for skill_file in "$AURION_SOURCE_DIR"/*.md; do
-        if ! head -n 1 "$skill_file" >/dev/null 2>&1; then
-            echo "⚠️  Ignorando fonte estratégica ilegível: $(basename "$skill_file")"
-            continue
+        # Improved legibility check
+        if head -n 1 "$skill_file" | grep -q "^#"; then
+             safe_link "$skill_file" "$SKILLS_DIR/aurion/$(basename "$skill_file")"
+             linked_any=1
+        else
+            echo "⚠️  Ignorando fonte estratégica possivelmente inválida: $(basename "$skill_file")"
         fi
-
-        safe_link "$skill_file" "$SKILLS_DIR/aurion/$(basename "$skill_file")"
-        linked_any=1
     done
     shopt -u nullglob
 
@@ -59,19 +59,34 @@ link_aurion_skills() {
     fi
 }
 
+
 generate_router() {
     echo "📡 Configurando roteador de persona..."
     cat <<EOF > "$SKILLS_DIR/router.md"
 # SKILL.md — Antigravity Persona Router
+
 ## Description
-Define como Antigravity lida com os gatilhos Aurion: e Aurora:.
+This script defines how the high-performance agent collective handles system triggers.
+
 ## Routing Rules
-### Aurion (Estratégico)
-Acknowledge com 🏛️. Prioriza .agent/skills/aurion/. Foco em "Por que" e estratégia.
-### Aurora (Operacional)
-Acknowledge com 🌌. Prioriza .agent/skills/aurora/. Foco em "Como" e execução.
+
+### 🏛️ Aurion (Strategic)
+- **Triggers**: "Aurion:", "Strategy:", "ADR:", "Review:"
+- **Protocol**: Socratic Deep Interview.
+- **Goal**: Minimize ambiguity, define architecture, and assess maturity using SEIP v2.
+- **Skills**: \`.agent/skills/aurion/\`
+
+### 🌌 Aurora (Operational)
+- **Triggers**: "Aurora:", "Implement:", "Fix:", "Refactor:", "TDD:"
+- **Protocol**: Ralph Loop (Plan → Execute → Verify → Fix).
+- **Goal**: Deliver impeccable, production-ready code with 80%+ coverage.
+- **Skills**: \`.agent/skills/aurora/\`
+
+## Collaboration Contract
+When in doubt, Aurion defines the "What" and "Why", while Aurora defines the "How".
 EOF
 }
+
 
 generate_manifest() {
     local skill_dir
@@ -127,17 +142,18 @@ if [ -f "$PROJECT_ROOT/AGENTS.md" ]; then
         cat <<EOF >> "$PROJECT_ROOT/AGENTS.md"
 
 ### ⚡ Aurion Integrated Skills
-- **Manifest**: [.agent/skills-manifest.md](file://$AGENT_DIR/skills-manifest.md)
+- **Manifest**: [.agent/skills-manifest.md](.agent/skills-manifest.md)
 - **Aurora**: \`.agent/skills/aurora/\`
 - **Aurion**: \`.agent/skills/aurion/\`
 
 ### 📡 Persona Protocols
-- **Aurion:** (Estratégico)
-- **Aurora:** (Operacional)
+- **Aurion:** (Strategic Architectural Command)
+- **Aurora:** (Precision Operational Squad)
 EOF
         echo "✅ AGENTS.md atualizado com protocolos de persona."
     fi
 fi
+
 
 if [ ! -f "$PROJECT_ROOT/RULES.md" ]; then
     safe_link "$AURION_ROOT/RULES.md" "$PROJECT_ROOT/RULES.md"

@@ -2,7 +2,10 @@
 # Aurion Nexus: Context Accelerator
 # Generates PULSE.md for fast agent onboarding.
 
+set -euo pipefail
+
 BLUE='\033[0;34m'
+
 NC='\033[0m'
 
 echo -e "${BLUE}💓 Generating Project Pulse...${NC}"

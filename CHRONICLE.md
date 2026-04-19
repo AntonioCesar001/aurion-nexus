@@ -18,8 +18,13 @@ Elevate Aurion and Aurora with state-of-the-art design intelligence and agentic 
 - **Constraint**: Need to ensure the "Librarian" protocol runs consistently at the end of every major task.
 
 ### Lessons Learned
-- **Clareza > Velocidade**: O uso de `deep-interview` reduziu drasticamente o risco de codar a solução errada para problemas vagos.
-- **Rigidez Estética**: O teste "AI Slop" é fundamental para manter a qualidade premium do projeto.
+- **Clarity > Speed**: The use of `deep-interview` drastically reduced the risk of coding the wrong solution for vague problems.
+- **Aesthetic Rigidity**: The "AI Slop" test is fundamental to maintaining the project's premium quality.
+
+# Aurion Nexus — The Sovereign Chronicle
+
+> [!NOTE]
+> **Architecture Principle**: Clarity > Speed. Every decision must be documented, and every gap must be resolved before scaling.
 
 ---
 

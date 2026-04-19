@@ -11,13 +11,25 @@ import re
 import sys
 import json
 from pathlib import Path
+from typing import List
 from urllib import request, error
+import structlog
 
 # Setup
+structlog.configure(
+    processors=[
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ]
+)
+log = structlog.get_logger()
+
 KNOWLEDGE_DIR = Path(__file__).resolve().parent.parent / ".agent" / "knowledge"
 WIKIMIND_INGEST_URL = "http://127.0.0.1:7842/ingest/url"
 
-def extract_urls(markdown_path: Path) -> list:
+def extract_urls(markdown_path: Path) -> List[str]:
+
     """Extrai URLs de Github do arquivo markdown."""
     urls = []
     if not markdown_path.exists():
@@ -50,11 +62,12 @@ def post_to_wikimind(url: str):
     try:
         with request.urlopen(req) as response:
             res_data = json.loads(response.read().decode())
-            print(f"✅ [SUCCESS] Sent: {url} -> {res_data.get('status')}")
+            log.info("ingest_success", url=url, status=res_data.get("status"))
     except error.HTTPError as e:
-        print(f"❌ [HTTP Error] Failed to send {url}: {e.code} - {e.reason}")
+        log.error("ingest_http_error", url=url, code=e.code, reason=e.reason)
     except error.URLError as e:
-        print(f"❌ [Connection Error] Backend not reachable. Is WikiMind running on 7842? ({e.reason})")
+        log.error("ingest_connection_error", url=url, reason=e.reason)
+
 
 def main():
     print("🌌 Initializing Nexus Catalog Ingester...")
@@ -77,9 +90,8 @@ def main():
         print(f"🔗 Processing {url} ...")
         post_to_wikimind(url)
         
-    print("\n✅ Batch injection mapped.")
-    print("The WikiMind ARQ Worker will now process the raw repositories in the background.")
-    print("They will be embedded and available locally shortly.")
+    log.info("batch_injection_mapped")
+
 
 if __name__ == "__main__":
     main()

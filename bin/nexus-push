@@ -7,6 +7,8 @@ set -e
 WIKIMIND_URL="${WIKIMIND_URL:-http://localhost:7842}"
 STORAGE_DIR="tools/lightrag/rag_storage"
 
+set -euo pipefail
+
 echo "🌌 Authenticating with Enterprise Knowledge Graph (WikiMind Core)..."
 
 if [ ! -d "$STORAGE_DIR" ]; then
@@ -17,7 +19,7 @@ fi
 
 echo "📦 Bundling Knowledge Graph data from $STORAGE_DIR..."
 
-BUNDLE_FILE="/tmp/$(basename $PWD)_lightrag_manifest.json"
+BUNDLE_FILE="/tmp/$(basename "$PWD")_lightrag_manifest.json"
 
 # In a full implementation, this script will compress graphml and kv json
 # into a unified structured manifest for WikiMind Core ingestion.
@@ -29,7 +31,7 @@ jq -n --arg name "$(basename $PWD)" '{
 
 echo "🚀 Transmitting Graph to Core Hub at $WIKIMIND_URL/ingest/graph..."
 
-PAYLOAD=$(jq -n --arg json "$(cat $BUNDLE_FILE)" --arg title "$(basename $PWD) Knowledge Graph" '{
+PAYLOAD=$(jq -n --arg json "$(cat "$BUNDLE_FILE")" --arg title "$(basename "$PWD") Knowledge Graph" '{
   manifest_json: $json,
   title: $title,
   auto_compile: true

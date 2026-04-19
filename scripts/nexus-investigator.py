@@ -16,6 +16,19 @@ import os
 import argparse
 import json
 from datetime import datetime, timezone
+from typing import Dict, Any, Optional
+import structlog
+
+# Configure structlog
+structlog.configure(
+    processors=[
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ]
+)
+log = structlog.get_logger()
+
 
 
 def strip_dom_noise(raw_html: str) -> str:
@@ -125,8 +138,9 @@ def main():
         )
         page = browser.new_page()
 
-        print(f"🔍 Investigating {args.url}...", file=sys.stderr)
+        log.info("investigating_url", url=args.url)
         page.goto(args.url, wait_until="domcontentloaded", timeout=30_000)
+
 
         # Wait briefly for dynamic content
         page.wait_for_timeout(2000)

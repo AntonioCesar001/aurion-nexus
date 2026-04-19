@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+import sys
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Confirm
+
+console = Console()
+
+def request_permission(action: str, reason: str) -> bool:
+    console.print("\n" + Panel(
+        f"[bold red]🔐 SECURITY AUTHORIZATION REQUIRED[/bold red]\n\n"
+        f"[bold]Action:[/bold] {action}\n"
+        f"[bold]Risk Category:[/bold] {reason}\n\n"
+        f"[dim]The agent is attempting a capability that requires your explicit consent.[/dim]",
+        border_style="red"
+    ))
+    
+    return Confirm.ask("Do you allow this action?")
+
+def main():
+    if len(sys.argv) < 3:
+        print("Usage: nexus-vault <action> <reason>")
+        sys.exit(1)
+        
+    action = sys.argv[1]
+    reason = sys.argv[2]
+    
+    allowed = request_permission(action, reason)
+    
+    if allowed:
+        console.print("[green]✅ Action authorized. Resuming execution...[/green]")
+        sys.exit(0)
+    else:
+        console.print("[red]❌ Action denied by user. Aborting mission sequence.[/red]")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

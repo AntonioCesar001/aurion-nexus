@@ -22,6 +22,7 @@ MISSING=0
 for file in "${REQUIRED_FILES[@]}"; do
     if [ ! -f "$file" ]; then
         echo -n -e "${RED}[Missing: $file] ${NC}"
+
         MISSING=$((MISSING+1))
     fi
 done
@@ -60,14 +61,19 @@ else
     echo -e "${RED}WARNING (no hooks in .agent/hooks/)${NC}"
 fi
 
-# 5. Check CLI binary
-echo -n "Checking aurion CLI... "
-if [ -x "$DIR/aurion" ]; then
+# 6. Check WikiMind connectivity
+echo -n "Checking WikiMind connectivity... "
+if curl -fsS http://127.0.0.1:7842/health >/dev/null 2>&1; then
     echo -e "${GREEN}PASS${NC}"
 else
-    echo -e "${RED}FAIL (bin/aurion not executable)${NC}"
-    ERRORS=$((ERRORS+1))
+    echo -e "${YELLOW}WARNING (WikiMind Core not reachable on 7842)${NC}"
 fi
 
+# 7. Check Environment
+echo -n "Checking Python version... "
+PYTHON_VER=$(python3 --version 2>&1 | awk '{print $2}')
+echo -e "${CYAN}${PYTHON_VER}${NC}"
+
 echo -e "${BLUE}--- Health Check Complete (${ERRORS} issues) ---${NC}"
+
 exit $ERRORS

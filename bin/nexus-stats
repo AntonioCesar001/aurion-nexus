@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+import sys
+import re
+import os
+import json
+from pathlib import Path
+from typing import Dict, List, Any
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+
+console = Console()
+
+# Market rates (sample for Claude 3.5 Sonnet)
+PRICING = {
+    "claude-3-5-sonnet-latest": {"input": 3.0, "output": 15.0}, # per million tokens
+    "claude-3-opus-latest": {"input": 15.0, "output": 75.0},
+    "claude-3-haiku-20240307": {"input": 0.25, "output": 1.25},
+    "gpt-4o": {"input": 5.0, "output": 15.0},
+}
+
+def parse_usage(log_content: str) -> List[Dict[str, Any]]:
+    # Regex for common usage headers in agent logs
+    # Pattern: [Usage] model: x, input: y, output: z
+    pattern = r"\[Usage\]\s+model:\s+(?P<model>[^,]+),\s+input:\s+(?P<input>\d+),\s+output:\s+(?P<output>\d+)"
+    usages = []
+    for match in re.finditer(pattern, log_content):
+        model = match.group("model").strip()
+        input_tokens = int(match.group("input"))
+        output_tokens = int(match.group("output"))
+        
+        rate = PRICING.get(model, {"input": 0, "output": 0})
+        cost = (input_tokens * rate["input"] + output_tokens * rate["output"]) / 1_000_000
+        
+        usages.append({
+            "model": model,
+            "input": input_tokens,
+            "output": output_tokens,
+            "cost": cost
+        })
+    return usages
+
+def show_stats():
+    console.print(Panel("[bold cyan]📊 Aurion Nexus — Token Consumption Dashboard (Elite FinOps)[/bold cyan]"))
+    
+    root_dir = Path(__file__).resolve().parent.parent
+    log_files = list(root_dir.glob("mission_*.log"))
+    
+    if not log_files:
+        console.print("[yellow]No mission logs found. Run a mission first.[/yellow]")
+        return
+
+    table = Table(title="Mission Consumption History")
+    table.add_column("Mission Date", style="dim")
+    table.add_column("Model/Agent", style="cyan")
+    table.add_column("Input", justify="right")
+    table.add_column("Output", justify="right")
+    table.add_column("Cost (USD)", justify="right", style="green")
+
+    total_cost = 0.0
+    
+    for log_path in sorted(log_files, key=os.path.getmtime, reverse=True):
+        mtime = datetime.fromtimestamp(log_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+        with open(log_path, "r") as f:
+            log_content = f.read()
+            usages = parse_usage(log_content)
+            
+            for u in usages:
+                table.add_row(
+                    mtime,
+                    u["model"],
+                    str(u["input"]),
+                    str(u["output"]),
+                    f"${u['cost']:.4f}"
+                )
+                total_cost += u["cost"]
+
+    console.print(table)
+    console.print(f"\n[bold]Total Historical Consumption Cost:[/bold] [bold green]${total_cost:.4f} USD[/bold green]")
+
+if __name__ == "__main__":
+    from datetime import datetime
+    show_stats()

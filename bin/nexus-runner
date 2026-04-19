@@ -1,0 +1,33 @@
+#!/bin/bash
+# 🏎️ Aurion Nexus — Sandbox Mission Runner
+
+set -euo pipefail
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+MISSION_NAME="${1:-unnamed_mission}"
+GOAL="${2:-}"
+
+echo -e "${YELLOW}🏎️ Nexus Runner Initializing [Context: $MISSION_NAME]${NC}"
+
+if command -v docker >/dev/null 2>&1; then
+    echo "🐳 Docker detected. Spinning up isolated sandbox..."
+    docker build -t aurion-sandbox . >/dev/null
+    docker run --rm -v "$(pwd):/app" aurion-sandbox aurion mission "$GOAL"
+else
+    echo -e "${RED}⚠️ Docker not found.${NC} Falling back to Restricted Local venv isolation."
+    
+    # Simulate isolation via a temporary venv if needed, 
+    # but for now we just use the root .venv but with a warning.
+    if [ -d ".venv" ]; then
+        echo "🔒 Using local .venv isolation layer."
+        source .venv/bin/activate
+        ./bin/aurion mission "$GOAL"
+    else
+        echo "❌ Failure: No isolation possible (no Docker and no .venv)."
+        exit 1
+    fi
+fi

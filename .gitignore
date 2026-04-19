@@ -24,3 +24,12 @@ build/
 
 # Antigravity Brain (generated per-session, not shareable)
 .gemini/antigravity/brain/
+
+# Python environment & cache
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.agent/mission_state.json

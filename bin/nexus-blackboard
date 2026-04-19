@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+import sys
+import json
+import os
+from datetime import datetime
+from typing import Dict, Any
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
+STATE_FILE = ".agent/mission_state.json"
+
+def load_state() -> Dict[str, Any]:
+    if not os.path.exists(STATE_FILE):
+        return {"mission_id": None, "global_context": {}, "handoffs": [], "shared_findings": []}
+    with open(STATE_FILE, "r") as f:
+        return json.load(f)
+
+def save_state(state: Dict[str, Any]):
+    os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
+    with open(STATE_FILE, "w") as f:
+        json.dump(state, f, indent=2)
+
+def main():
+    if len(sys.argv) < 2:
+        state = load_state()
+        console.print(Panel(json.dumps(state, indent=2), title="🧠 Nexus Blackboard State", border_style="magenta"))
+        return
+
+    cmd = sys.argv[1]
+    state = load_state()
+
+    if cmd == "set" and len(sys.argv) >= 4:
+        key = sys.argv[2]
+        value = sys.argv[3]
+        state["global_context"][key] = value
+        save_state(state)
+        console.print(f"[green]Key '{key}' updated in Blackboard.[/green]")
+    
+    elif cmd == "finding" and len(sys.argv) >= 3:
+        finding = sys.argv[2]
+        state["shared_findings"].append({
+            "timestamp": datetime.now().isoformat(),
+            "content": finding
+        })
+        save_state(state)
+        console.print(f"[cyan]New finding recorded for mission partners.[/cyan]")
+
+    elif cmd == "clear":
+        save_state({"mission_id": None, "global_context": {}, "handoffs": [], "shared_findings": []})
+        console.print("[yellow]Blackboard wiped clean.[/yellow]")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+import sys
+import json
+import os
+from typing import Dict, Any, List
+from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric
+from deepeval.test_case import LLMTestCase
+import structlog
+
+# Setup logging
+structlog.configure(
+    processors=[
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ]
+)
+log = structlog.get_logger()
+
+def evaluate_mission_outcome(goal: str, output: str, retrieval_context: List[str]) -> Dict[str, Any]:
+    """Measure the quality of an agent's mission outcome."""
+    
+    # Define metrics
+    faithfulness_metric = FaithfulnessMetric(threshold=0.7)
+    relevancy_metric = AnswerRelevancyMetric(threshold=0.7)
+    
+    test_case = LLMTestCase(
+        input=goal,
+        actual_output=output,
+        retrieval_context=retrieval_context
+    )
+    
+    # Run evaluations
+    faithfulness_metric.measure(test_case)
+    relevancy_metric.measure(test_case)
+    
+    results = {
+        "faithfulness": {
+            "score": faithfulness_metric.score,
+            "reason": faithfulness_metric.reason
+        },
+        "relevancy": {
+            "score": relevancy_metric.score,
+            "reason": relevancy_metric.reason
+        },
+        "status": "PASS" if faithfulness_metric.score >= 0.7 and relevancy_metric.score >= 0.7 else "FAIL"
+    }
+    
+    log.info("mission_evaluated", goal=goal, results=results)
+    return results
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: nexus-eval <mission_data.json>")
+        sys.exit(1)
+        
+    data_path = sys.argv[1]
+    with open(data_path, "r") as f:
+        data = json.load(f)
+        
+    results = evaluate_mission_outcome(
+        goal=data.get("goal", ""),
+        output=data.get("output", ""),
+        retrieval_context=data.get("context", [])
+    )
+    
+    print(json.dumps(results, indent=2))
+
+if __name__ == "__main__":
+    main()
