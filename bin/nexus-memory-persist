@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+"""
+Nexus Memory Persist — Auto-saves insights to the Knowledge Brain.
+
+Usage:
+    nexus-memory-persist <slug> <content>
+    nexus-memory-persist --from-stdin <slug>
+
+The script creates a timestamped Markdown file inside .agent/knowledge/insights/
+and optionally pushes the content to the WikiMind Gateway for vectorization.
+"""
+
+import sys
+import os
+import json
+import argparse
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import List, Optional
+from urllib import request, error
+
+
+def slugify(text: str) -> str:
+    """Convert a title into a safe filename slug."""
+    return (
+        text.lower()
+        .replace(" ", "-")
+        .replace("/", "-")
+        .replace(":", "")
+        .replace("?", "")
+        .replace("!", "")
+        .replace("'", "")
+        .replace('"', "")
+        .strip("-")[:60]
+    )
+
+
+def persist_to_file(title: str, content: str, tags: Optional[List[str]] = None) -> Path:
+    """Write insight to .agent/knowledge/insights/ as a Markdown file."""
+    project_root = Path(__file__).resolve().parent.parent
+    insights_dir = project_root / ".agent" / "knowledge" / "insights"
+    insights_dir.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.now(timezone.utc)
+    slug = slugify(title)
+    filename = f"{timestamp.strftime('%Y%m%d-%H%M')}-{slug}.md"
+    filepath = insights_dir / filename
+
+    tag_line = ""
+    if tags:
+        tag_line = f"tags: {', '.join(tags)}\n"
+
+    md_content = f"""---
+title: "{title}"
+created: {timestamp.isoformat()}
+source: agent-session
+{tag_line}---
+
+# {title}
+
+{content.strip()}
+"""
+
+    filepath.write_text(md_content, encoding="utf-8")
+    return filepath
+
+
+def push_to_wikimind(title: str, content: str) -> bool:
+    """Optionally push the insight to WikiMind for vectorization."""
+    wikimind_url = os.environ.get("WIKIMIND_URL", "http://127.0.0.1:7842")
+    endpoint = f"{wikimind_url}/ingest/text"
+
+    payload = json.dumps({
+        "title": title,
+        "content": content,
+        "source": "nexus-memory-persist",
+    }).encode("utf-8")
+
+    req = request.Request(
+        endpoint,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+    )
+
+    try:
+        with request.urlopen(req, timeout=5) as resp:
+            return resp.status == 200
+    except (error.URLError, error.HTTPError, OSError):
+        return False
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Persist an insight to the Aurion Nexus knowledge brain"
+    )
+    parser.add_argument("title", help="Title/slug for the insight")
+    parser.add_argument("content", nargs="?", default=None, help="Content to save")
+    parser.add_argument(
+        "--from-stdin",
+        action="store_true",
+        help="Read content from stdin instead of argument",
+    )
+    parser.add_argument(
+        "--tags",
+        type=str,
+        default="",
+        help="Comma-separated tags (e.g., 'architecture,saas,metrics')",
+    )
+    parser.add_argument(
+        "--no-wikimind",
+        action="store_true",
+        help="Skip pushing to WikiMind Gateway",
+    )
+    args = parser.parse_args()
+
+    if args.from_stdin:
+        content = sys.stdin.read()
+    elif args.content:
+        content = args.content
+    else:
+        print("Error: Provide content as argument or use --from-stdin", file=sys.stderr)
+        sys.exit(1)
+
+    tags = [t.strip() for t in args.tags.split(",") if t.strip()] if args.tags else None
+
+    # 1. Save to filesystem (Obsidian-visible)
+    filepath = persist_to_file(args.title, content, tags)
+    print(f"💾 Insight saved: {filepath}")
+
+    # 2. Push to WikiMind (vectorization)
+    if not args.no_wikimind:
+        ok = push_to_wikimind(args.title, content)
+        if ok:
+            print("🧠 Vectorized in WikiMind successfully.")
+        else:
+            print("⚠️  WikiMind not reachable — file saved locally only.")
+
+    print("✅ Knowledge persisted.")
+
+
+if __name__ == "__main__":
+    main()
