@@ -77,9 +77,30 @@ async def lifespan(app: FastAPI):
     await close_db()
 
 
+API_DESCRIPTION = """
+**Bem-vindo ao WikiMind Gateway (`/docs`)!** 🧠
+
+Esta tela é o Painel de Controle oficial e a Documentação Interativa da sua API. Ela serve para você entender as engrenagens do seu Cérebro Setorial e testar a comunicação sem precisar escrever código ou usar ferramentas externas.
+
+### 💡 Para que serve este Gateway?
+O **WikiMind Gateway** é o motor que coordena o seu "Enterprise Knowledge Graph". É ele que:
+1. **Absorve** conteúdos que as suas ferramentas injetam na ponta (como o `/bin/nexus-push`).
+2. **Processa** assincronamente textos transformando-os em tensores/embeddings.
+3. **Responde** perguntas complexas usando a IA embasada em todos os PDFs, Githubs e textos que você colocou.
+
+### ⚙️ Engenharia da API (Como testar)
+Você pode clicar nos blocos coloridos abaixo e usar o botão **"Try it out"** para enviar testes reais.
+- **`[Ingest]`**: Endpoints que alimentam a entidade (URLs, PDF, Knowledge Graphs).
+- **`[Query]`**: Converse com o seu Cérebro. Endpoints do fluxo RAG que misturam Busca no Banco de Dados + Respostas LLM.
+- **`[Jobs]`**: Consulte o status da esteira de fundo. Ideal para ver se aquele link pesado do Github já terminou de ser absorvido.
+- **`[Wiki]`**: Endpoints que simulam uma Wikipédia viva gerada sobre suas regras de engenharia.
+
+*Ambiente 100% Local (Localhost). Seus dados não saem da sua máquina até o limite seguro da API LLM escolhida nas Configurações (`/settings`).*
+"""
+
 app = FastAPI(
-    title="WikiMind Gateway",
-    description="Local LLM Knowledge OS — Personal API",
+    title="WikiMind Gateway Core",
+    description=API_DESCRIPTION,
     version="0.1.0",
     lifespan=lifespan,
 )
