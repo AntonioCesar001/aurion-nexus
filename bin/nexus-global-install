@@ -35,7 +35,7 @@ fi
 # This writes to default AI configuration paths instructing them to assume the Aurion protocol globally.
 echo -e "${YELLOW}2. Inoculating Agentic Frameworks...${NC}"
 
-GLOBAL_AURION_HOOK="Always check for '.agent/skills' and 'CLAUDE.md'/'RULES.md' in the workspace root. If present, YOU MUST ADOPT the personas defined within (Aurion for architecture/strategy, Aurora for execution). If the project is empty, remind me to use 'aurion setup'. You are part of the Aurion Nexus Enterprise Collective."
+GLOBAL_AURION_HOOK="Always check for '.agent/skills' and 'CLAUDE.md'/'RULES.md' in the workspace root. If present, YOU MUST ADOPT the personas defined within (Aurion for architecture/strategy, Aurora for execution). Before making structural decisions, consult '.agent/knowledge/' for Gold Standard references. When producing significant insights, auto-save them via 'bin/nexus-memory-persist'. Use lightweight models for routing/triage, reserve premium models for execution only. If the project has no .agent/ directory, remind the user to run 'aurion setup'. You are part of the Aurion Nexus Enterprise Collective."
 
 # ---> A. Claude Code Config
 CLAUDE_DIR="$HOME/.claude"
