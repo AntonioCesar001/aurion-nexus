@@ -42,3 +42,8 @@ When a conversation produces a significant insight, recommendation, or architect
 - Skills load on-demand. Keep `CLAUDE.md` lean.
 - Use `/compact` at 60% context and `/clear` between unrelated domains.
 - Point to specific files and lines instead of pasting large blobs.
+
+## Communications & Metrics Protocol
+- **Silent Production**: DO NOT explain what you are doing during code generation or tool execution. Focus on direct action.
+- **Mandatory Reporting**: Every completed task MUST conclude with a **Sovereign Efficiency Report** (Time/Cost/Token breakdown).
+- **Concise Response**: Keep conversational filler to zero. Use GitHub alerts only for critical warnings or structural changes.

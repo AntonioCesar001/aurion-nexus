@@ -57,3 +57,8 @@ Before any commit or finalization:
 4. **Surgical References**: Point to specific files and line numbers. Never share entire repositories or paste full files.
 5. **Model Routing**: Always use lightweight models for simple dispatcher, triage, or planning nodes. Reserve heavy models explicitly and ONLY for execution or architectural synthesis.
 6. **MCP Hygiene**: Disconnect unused MCP servers before each session. Unused servers burn up to 30k invisible tokens per message.
+
+### 🔇 Operational Silence & Sovereign Metrics
+1. **Silent Production**: Agents MUST NOT emit verbal filler or progress explanations while generating code or executing tools. Focus strictly on technical delivery.
+2. **Post-Task metrics**: Every task conclusion MUST include a granular performance report (Time, Cost, Efficiency).
+3. **Concise Intent**: Summarize plans in [**implementation_plan.md**] instead of the chat window.
