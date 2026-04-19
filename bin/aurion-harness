@@ -8,7 +8,7 @@ from rich.table import Table
 
 console = Console()
 
-WORKSPACE_ROOT = "/Users/ton_dev/desenvolvimento/aurion-nexus"
+WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 REQUIRED_FILES = [
     ".agent/docs/RULES.md",
