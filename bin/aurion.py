@@ -2,7 +2,12 @@
 import sys
 import os
 import time
+
+# Ensure project root is in path for scripts module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from datetime import datetime
+
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
