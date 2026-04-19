@@ -8,9 +8,9 @@ Usage: python architecture_validator.py
 """
 
 import argparse
-import sys
 import json
 import re
+import sys
 from datetime import datetime
 
 # Validation rules organized by category
@@ -192,7 +192,7 @@ VALIDATION_RULES = {
 def validate_architecture(text: str) -> dict:
     """Validate architecture description against rules."""
     text_lower = text.lower()
-    
+
     results = {
         "validated_at": datetime.now().isoformat(),
         "input_length": len(text),
@@ -205,7 +205,7 @@ def validate_architecture(text: str) -> dict:
         },
         "categories_checked": list(VALIDATION_RULES.keys())
     }
-    
+
     for category, rules in VALIDATION_RULES.items():
         for rule in rules:
             try:
@@ -222,7 +222,7 @@ def validate_architecture(text: str) -> dict:
                     results["summary"][rule["severity"]] += 1
             except re.error:
                 pass  # Skip invalid regex
-    
+
     # Add positive findings for good practices detected
     good_practices = []
     if re.search(r"multi.az|multiple.az", text_lower):
@@ -237,18 +237,18 @@ def validate_architecture(text: str) -> dict:
         good_practices.append("✅ Infrastructure as Code mentioned")
     if re.search(r"private.subnet|private\s+subnet", text_lower):
         good_practices.append("✅ Private subnets mentioned")
-    
+
     results["good_practices"] = good_practices
-    
+
     return results
 
 def main():
     parser = argparse.ArgumentParser(description="Validate AWS Architecture Description")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument("--severity", choices=["HIGH", "MEDIUM", "LOW", "INFO"], 
+    parser.add_argument("--severity", choices=["HIGH", "MEDIUM", "LOW", "INFO"],
                         help="Filter by minimum severity")
     args = parser.parse_args()
-    
+
     # Get description from stdin
     if not sys.stdin.isatty():
         text = sys.stdin.read().strip()
@@ -256,16 +256,16 @@ def main():
         print("Please provide architecture description via stdin.")
         print("Example: echo 'Lambda API with DynamoDB' | python architecture_validator.py")
         return
-    
+
     results = validate_architecture(text)
-    
+
     # Filter by severity if requested
     if args.severity:
         severity_order = ["HIGH", "MEDIUM", "LOW", "INFO"]
         min_index = severity_order.index(args.severity)
         allowed = severity_order[:min_index + 1]
         results["findings"] = [f for f in results["findings"] if f["severity"] in allowed]
-    
+
     if args.json:
         print(json.dumps(results, indent=2))
     else:
@@ -275,35 +275,35 @@ def main():
         print(f"Validated: {results['validated_at']}")
         print(f"Findings: {len(results['findings'])} issues found")
         print(f"  HIGH: {results['summary']['HIGH']} | MEDIUM: {results['summary']['MEDIUM']} | LOW: {results['summary']['LOW']} | INFO: {results['summary']['INFO']}")
-        
+
         if results["good_practices"]:
             print(f"\n{'='*70}")
             print("GOOD PRACTICES DETECTED")
             print(f"{'='*70}")
             for practice in results["good_practices"]:
                 print(f"  {practice}")
-        
+
         if results["findings"]:
             print(f"\n{'='*70}")
             print("FINDINGS")
             print(f"{'='*70}")
-            
-            for finding in sorted(results["findings"], 
+
+            for finding in sorted(results["findings"],
                                  key=lambda x: ["HIGH", "MEDIUM", "LOW", "INFO"].index(x["severity"])):
                 severity_icon = {
                     "HIGH": "🔴",
-                    "MEDIUM": "🟡", 
+                    "MEDIUM": "🟡",
                     "LOW": "🟢",
-                    "INFO": "ℹ️"
+                    "INFO": "🔵"
                 }[finding["severity"]]
-                
+
                 print(f"\n{severity_icon} [{finding['id']}] {finding['name']}")
                 print(f"   Category: {finding['category']}")
                 print(f"   Issue: {finding['message']}")
                 print(f"   Recommendation: {finding['recommendation']}")
         else:
             print("\n✅ No issues found!")
-        
+
         print(f"\n{'='*70}")
         print("Note: This is an automated check. Use aws___search_documentation for detailed guidance.")
         print(f"{'='*70}\n")

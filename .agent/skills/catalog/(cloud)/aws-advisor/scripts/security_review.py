@@ -8,8 +8,8 @@ Usage: python security_review.py --services "Lambda,DynamoDB,S3"
 """
 
 import argparse
-import sys
 import json
+import sys
 from datetime import datetime
 
 SECURITY_CHECKS = {
@@ -152,22 +152,22 @@ def detect_services(text: str) -> list:
         "Cognito": ["cognito", "user pool", "authentication"],
         "CloudWatch": ["cloudwatch", "logging", "monitoring"],
     }
-    
+
     text_lower = text.lower()
     detected = []
     for service, keywords in service_keywords.items():
         if any(kw in text_lower for kw in keywords):
             detected.append(service)
-    
+
     # Always include IAM and CloudWatch
     if "IAM" not in detected:
         detected.append("IAM")
     if "CloudWatch" not in detected:
         detected.append("CloudWatch")
-    
+
     return detected
 
-def generate_checklist(services: list, severity_filter: str = None) -> dict:
+def generate_checklist(services: list, severity_filter: str | None = None) -> dict:
     """Generate security checklist for given services."""
     checklist = {
         "generated_at": datetime.now().isoformat(),
@@ -176,28 +176,28 @@ def generate_checklist(services: list, severity_filter: str = None) -> dict:
         "by_severity": {"HIGH": 0, "MEDIUM": 0, "LOW": 0},
         "categories": []
     }
-    
+
     for service in services:
         if service not in SECURITY_CHECKS:
             continue
-        
+
         service_data = SECURITY_CHECKS[service]
         checks = service_data["checks"]
-        
+
         if severity_filter:
             checks = [c for c in checks if c["severity"] == severity_filter.upper()]
-        
+
         if checks:
             category = {
                 "name": service_data["category"],
                 "checks": checks
             }
             checklist["categories"].append(category)
-            
+
             for check in checks:
                 checklist["total_checks"] += 1
                 checklist["by_severity"][check["severity"]] += 1
-    
+
     return checklist
 
 def main():
@@ -206,7 +206,7 @@ def main():
     parser.add_argument("--severity", choices=["HIGH", "MEDIUM", "LOW"], help="Filter by severity")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
-    
+
     # Get services from args or stdin
     if args.services:
         services = [s.strip() for s in args.services.split(",")]
@@ -216,25 +216,25 @@ def main():
     else:
         # Default to common serverless stack
         services = ["IAM", "Lambda", "API Gateway", "DynamoDB", "S3", "CloudWatch"]
-    
+
     checklist = generate_checklist(services, args.severity)
-    
+
     if args.json:
         print(json.dumps(checklist, indent=2))
     else:
         print(f"\n{'='*70}")
-        print(f"SECURITY REVIEW CHECKLIST")
+        print("SECURITY REVIEW CHECKLIST")
         print(f"Generated: {checklist['generated_at']}")
         print(f"Services: {', '.join(services)}")
         print(f"Total Checks: {checklist['total_checks']} (HIGH: {checklist['by_severity']['HIGH']}, MEDIUM: {checklist['by_severity']['MEDIUM']}, LOW: {checklist['by_severity']['LOW']})")
         print(f"{'='*70}")
-        
+
         for category in checklist["categories"]:
             print(f"\n## {category['name']}\n")
             for check in category["checks"]:
                 severity_icon = {"HIGH": "🔴", "MEDIUM": "🟡", "LOW": "🟢"}[check["severity"]]
                 print(f"  [ ] {severity_icon} [{check['id']}] {check['check']}")
-        
+
         print(f"\n{'='*70}")
         print("Legend: 🔴 HIGH | 🟡 MEDIUM | 🟢 LOW")
         print("Note: Use aws___search_documentation for implementation guidance.")

@@ -5,6 +5,7 @@ unless explicitly allowed via the WIKIMIND_ALLOW_REMOTE environment variable.
 """
 
 import os
+
 import structlog
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
@@ -20,17 +21,17 @@ class LocalOnlyMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         """Verify client IP and block non-local requests."""
         allow_remote = os.environ.get("WIKIMIND_ALLOW_REMOTE", "false").lower() == "true"
-        
+
         if allow_remote:
             return await call_next(request)
 
         client_host = request.client.host if request.client else "unknown"
-        
+
         if client_host not in ALLOWED_HOSTS:
             log.warning("THREAT DETECTED: Blocked remote access attempt",
                         client_host=client_host,
                         path=request.url.path)
-            
+
             return JSONResponse(
                 status_code=403,
                 content={

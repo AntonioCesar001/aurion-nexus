@@ -10,13 +10,13 @@ This reduces downstream LLM token consumption by 60-80% compared to
 feeding raw HTML into the agent context window.
 """
 
-import re
-import sys
-import os
 import argparse
 import json
-from datetime import datetime, timezone
-from typing import Dict, Any, Optional
+import os
+import re
+import sys
+from datetime import UTC, datetime
+
 import structlog
 
 # Configure structlog
@@ -42,7 +42,7 @@ def strip_dom_noise(raw_html: str) -> str:
     5. Collapse excessive whitespace.
     6. Truncate to a safe ceiling (MAX_CHARS) to prevent context overflow.
     """
-    MAX_CHARS = 15_000  # ~3,750 tokens at 4 chars/token — safe for most LLM windows
+    max_chars = 15_000  # ~3,750 tokens at 4 chars/token — safe for most LLM windows
 
     text = raw_html
 
@@ -76,7 +76,7 @@ def strip_dom_noise(raw_html: str) -> str:
     entity_map = {
         "&amp;": "&", "&lt;": "<", "&gt;": ">",
         "&quot;": '"', "&#39;": "'", "&nbsp;": " ",
-        "&mdash;": "—", "&ndash;": "–", "&hellip;": "…",
+        "&mdash;": "—", "&ndash;": "-", "&hellip;": "…",
     }
     for entity, char in entity_map.items():
         text = text.replace(entity, char)
@@ -87,8 +87,8 @@ def strip_dom_noise(raw_html: str) -> str:
     text = "\n".join(line.strip() for line in text.splitlines() if line.strip())
 
     # Phase 8: Truncate to safe ceiling
-    if len(text) > MAX_CHARS:
-        text = text[:MAX_CHARS] + "\n\n[... TRUNCATED — content exceeded safe token ceiling ...]"
+    if len(text) > max_chars:
+        text = text[:max_chars] + "\n\n[... TRUNCATED — content exceeded safe token ceiling ...]"
 
     return text
 
@@ -157,10 +157,7 @@ def main():
         browser.close()
 
     # --- Compression Pipeline ---
-    if args.raw:
-        compressed = raw_content
-    else:
-        compressed = strip_dom_noise(raw_content)
+    compressed = raw_content if args.raw else strip_dom_noise(raw_content)
 
     if not compressed.strip():
         compressed = "[WARNING] Page content was empty after compression. The page may require JavaScript rendering or login."
@@ -170,7 +167,7 @@ def main():
         result = {
             "url": args.url,
             "title": page_title,
-            "scraped_at": datetime.now(timezone.utc).isoformat(),
+            "scraped_at": datetime.now(UTC).isoformat(),
             "raw_bytes": len(raw_content),
             "compressed_chars": len(compressed),
             "compression_ratio": f"{(1 - len(compressed) / max(len(raw_content), 1)) * 100:.1f}%",

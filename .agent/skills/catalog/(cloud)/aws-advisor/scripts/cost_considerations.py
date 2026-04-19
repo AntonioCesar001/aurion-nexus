@@ -10,8 +10,8 @@ Usage: python cost_considerations.py --services "Lambda,DynamoDB,API Gateway"
 """
 
 import argparse
-import sys
 import json
+import sys
 from datetime import datetime
 
 # Cost factors by service
@@ -36,7 +36,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/Lambda"
     },
-    
+
     "API Gateway": {
         "category": "API Management",
         "pricing_model": "Pay per request + data transfer",
@@ -55,7 +55,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/APIGateway"
     },
-    
+
     "DynamoDB": {
         "category": "Database - NoSQL",
         "pricing_model": "On-demand OR Provisioned capacity",
@@ -79,7 +79,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/DynamoDB"
     },
-    
+
     "S3": {
         "category": "Storage - Object",
         "pricing_model": "Pay per GB stored + requests + data transfer",
@@ -100,7 +100,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/S3"
     },
-    
+
     "RDS": {
         "category": "Database - Relational",
         "pricing_model": "Pay per instance hour + storage + I/O",
@@ -122,7 +122,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/RDS"
     },
-    
+
     "ECS": {
         "category": "Compute - Containers",
         "pricing_model": "Fargate: vCPU + Memory per second | EC2: instance costs",
@@ -143,7 +143,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/Fargate"
     },
-    
+
     "CloudFront": {
         "category": "CDN",
         "pricing_model": "Pay per data transfer + requests",
@@ -162,7 +162,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/CloudFront"
     },
-    
+
     "NAT Gateway": {
         "category": "Networking",
         "pricing_model": "Pay per hour + data processed",
@@ -179,7 +179,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/VPC"
     },
-    
+
     "VPC Endpoints": {
         "category": "Networking",
         "pricing_model": "Gateway: Free | Interface: hourly + data",
@@ -195,7 +195,7 @@ COST_FACTORS = {
         ],
         "calculator_link": "https://calculator.aws/#/addService/VPC"
     },
-    
+
     "Secrets Manager": {
         "category": "Security",
         "pricing_model": "Pay per secret + API calls",
@@ -226,13 +226,13 @@ def detect_services(text: str) -> list:
         "VPC Endpoints": ["vpc endpoint", "privatelink"],
         "Secrets Manager": ["secrets manager"],
     }
-    
+
     text_lower = text.lower()
     detected = []
     for service, keywords in service_keywords.items():
         if any(kw in text_lower for kw in keywords):
             detected.append(service)
-    
+
     return detected if detected else ["Lambda", "API Gateway", "DynamoDB"]
 
 def generate_cost_report(services: list) -> dict:
@@ -251,7 +251,7 @@ def generate_cost_report(services: list) -> dict:
         ],
         "calculator_link": "https://calculator.aws/#/"
     }
-    
+
     for service in services:
         if service in COST_FACTORS:
             details = COST_FACTORS[service].copy()
@@ -260,7 +260,7 @@ def generate_cost_report(services: list) -> dict:
                 **details
             })
             report["total_factors"] += len(details["factors"])
-    
+
     return report
 
 def main():
@@ -268,7 +268,7 @@ def main():
     parser.add_argument("--services", help="Comma-separated list of AWS services")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
-    
+
     # Get services from args or stdin
     if args.services:
         services = [s.strip() for s in args.services.split(",")]
@@ -277,9 +277,9 @@ def main():
         services = detect_services(text)
     else:
         services = ["Lambda", "API Gateway", "DynamoDB", "S3"]
-    
+
     report = generate_cost_report(services)
-    
+
     if args.json:
         print(json.dumps(report, indent=2))
     else:
@@ -289,9 +289,9 @@ def main():
         print(f"Generated: {report['generated_at']}")
         print(f"Services: {', '.join(services)}")
         print(f"Total factors to evaluate: {report['total_factors']}")
-        print(f"\n⚠️  This report lists WHAT to consider, not actual costs.")
+        print("\n⚠️  This report lists WHAT to consider, not actual costs.")
         print(f"    Use AWS Pricing Calculator: {report['calculator_link']}")
-        
+
         for service_data in report["service_details"]:
             print(f"\n{'='*70}")
             print(f"## {service_data['service']}")
@@ -299,25 +299,25 @@ def main():
             print(f"   Pricing Model: {service_data['pricing_model']}")
             if service_data.get('free_tier'):
                 print(f"   Free Tier: {service_data['free_tier']}")
-            
-            print(f"\n   📊 Cost Factors to Evaluate:")
+
+            print("\n   📊 Cost Factors to Evaluate:")
             for factor in service_data['factors']:
                 impact_icon = {"HIGH": "🔴", "MEDIUM": "🟡", "LOW": "🟢"}[factor["impact"]]
                 note = f" ({factor['note']})" if factor.get('note') else ""
                 print(f"      {impact_icon} {factor['factor']} [{factor['unit']}]{note}")
-            
-            print(f"\n   💡 Optimization Tips:")
+
+            print("\n   💡 Optimization Tips:")
             for tip in service_data['optimization_tips']:
                 print(f"      • {tip}")
-            
+
             print(f"\n   🔗 Calculator: {service_data['calculator_link']}")
-        
+
         print(f"\n{'='*70}")
         print("GENERAL RECOMMENDATIONS")
         print(f"{'='*70}")
         for tip in report["general_tips"]:
             print(f"  • {tip}")
-        
+
         print(f"\n{'='*70}")
         print("Next Steps:")
         print("  1. Gather actual usage estimates for each factor")

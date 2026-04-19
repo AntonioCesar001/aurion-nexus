@@ -8,9 +8,7 @@ WIKILINK_RE = re.compile(r"\[\[(.*?)\]\]")
 
 def is_false_positive(link):
     # Ignore coordinates, numeric arrays, and dates
-    if re.match(r"^[\d\s,\[\]\.-]+$", link):
-        return True
-    return False
+    return bool(re.match(r"^[\d\s,\[\]\.-]+$", link))
 
 def audit_links(fix=False):
     print(f"🔍 Starting Semantic Integrity Scan in {WORKSPACE_ROOT}...")
@@ -23,7 +21,7 @@ def audit_links(fix=False):
             if file.endswith(".md"):
                 file_path = Path(root) / file
                 scanned_files += 1
-                with open(file_path, "r", encoding="utf-8") as f:
+                with open(file_path, encoding="utf-8") as f:
                     content = f.read()
 
                 original_content = content
@@ -33,7 +31,7 @@ def audit_links(fix=False):
                 for link in links:
                     if is_false_positive(link):
                         continue
-                    
+
                     target = link.split("|")[0].strip()
                     if target.startswith(("http://", "https://")):
                         continue
@@ -53,11 +51,11 @@ def audit_links(fix=False):
 
                 if fix and broken_in_file:
                     for broken in broken_in_file:
-                        # Convert [[BrokenLink]] -> BrokenLink 
+                        # Convert [[BrokenLink]] -> BrokenLink
                         # Or [[BrokenLink|Display]] -> Display
                         replacement = broken.split("|")[-1].strip()
                         content = content.replace(f"[[{broken}]]", replacement)
-                    
+
                     if content != original_content:
                         with open(file_path, "w", encoding="utf-8") as f:
                             f.write(content)

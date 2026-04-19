@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
-import sys
 import os
+import sys
 import time
 
 # Ensure project root is in path for scripts module
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from datetime import datetime
 
-from typing import Optional
+from opentelemetry import trace
 from rich.console import Console
 from rich.panel import Panel
+from rich.progress import BarColumn, Progress, SpinnerColumn, TaskProgressColumn, TextColumn
 from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
-from rich.live import Live
-from rich.columns import Columns
-from rich.layout import Layout
-from scripts.nexus_trace import setup_tracing, get_tracer
-from opentelemetry import trace
+
+from scripts.nexus_trace import get_tracer, setup_tracing
 
 # Initialize Tracing
 setup_tracing("aurion-cli")
@@ -45,26 +41,22 @@ class ProviderManager:
     def get_completion(self, prompt: str, complexity: str = "high"):
         """Simulate resilience-aware completion with Prompt Caching."""
         target_model = self._get_model_for_complexity(complexity)
-        
+
         # Simulated Prompt Caching headers (Anthropic style)
-        headers = {
-            "anthropic-beta": "prompt-caching-2024-07-31",
-            "anthropic-version": "2023-06-01"
-        }
-        
+
         try:
             if self.failure_count >= self.threshold:
                 raise Exception("Primary provider down")
-            
+
             # SIMULATED COST SAVINGS (Cache Hit)
             saved_tokens = 6800 if "context" in prompt.lower() else 0
-            
+
             return {
                 "text": f"Response from {self.active_provider} using {target_model}",
                 "saved_tokens": saved_tokens,
                 "model": target_model
             }
-        except Exception as e:
+        except Exception:
             self.fallback()
             return self.get_completion(prompt, complexity)
 
@@ -78,7 +70,7 @@ class ProviderManager:
 class AurionCLI:
     def __init__(self):
         self.version = "1.1.0-ELITE"
-        
+
     def show_header(self):
         header_text = f"[bold cyan]🏛️ AURION NEXUS[/bold cyan] [dim]v{self.version}[/dim]\n[italic blue]Sovereign Agentic Framework[/italic blue]"
         console.print(Panel(header_text, border_style="blue", expand=False))
@@ -96,7 +88,7 @@ class AurionCLI:
         table.add_row("Semantic Router", "📡 ENGAGED (Prompt Caching ON)", "Ready")
 
         console.print(table)
-        
+
         stats = Panel(
             "[bold]Session Consumption:[/bold] [green]$0.0012 USD[/green] (Reduced via Prompt Caching)\n"
             "[bold]Active Missions:[/bold] 0\n"
@@ -122,7 +114,7 @@ class AurionCLI:
             sys.exit(1)
 
         provider = ProviderManager()
-        
+
         with tracer.start_as_current_span("mission_execution") as span:
             span.set_attribute("mission.goal", goal)
             self.show_header()
@@ -139,7 +131,7 @@ class AurionCLI:
                 start_t1 = time.perf_counter()
                 dispatch_resp = provider.get_completion("Triage context", complexity="low")
                 t1 = progress.add_task(f"[blue]Aurion:[/blue] Strategy (via {dispatch_resp['model']})", total=100)
-                
+
                 with tracer.start_as_current_span("aurion_alignment"):
                     while progress.tasks[t1].completed < 100:
                         time.sleep(0.01)
@@ -150,7 +142,7 @@ class AurionCLI:
                 start_t2 = time.perf_counter()
                 exec_resp = provider.get_completion("Execute with heavy context", complexity="high")
                 t2 = progress.add_task(f"[cyan]Aurora:[/cyan] Implementation (via {exec_resp['model']})", total=100)
-                
+
                 with tracer.start_as_current_span("aurora_execution"):
                     while progress.tasks[t2].completed < 100:
                         time.sleep(0.01)
@@ -165,7 +157,7 @@ class AurionCLI:
                         time.sleep(0.01)
                         progress.update(t3, advance=20)
                 duration_t3 = time.perf_counter() - start_t3
-            
+
             # --- Sovereign Efficiency Report ---
             table = Table(title="Sovereign Efficiency Report", border_style="bold green")
             table.add_column("Agent/Phase", style="cyan")
@@ -181,7 +173,7 @@ class AurionCLI:
             table.add_row("Aurion (Strategy)", dispatch_resp['model'], f"{duration_t1:.2f}s", f"{dispatch_resp['saved_tokens']}", f"${cost_t1:.4f}")
             table.add_row("Aurora (Execution)", exec_resp['model'], f"{duration_t2:.2f}s", f"{exec_resp['saved_tokens']}", f"${cost_t2:.4f}")
             table.add_row("Shield (Security)", "Deterministic", f"{duration_t3:.2f}s", "N/A", f"${cost_t3:.4f}")
-            
+
             total_time = duration_t1 + duration_t2 + duration_t3
             total_cost = cost_t1 + cost_t2 + cost_t3
             total_saved = dispatch_resp['saved_tokens'] + exec_resp['saved_tokens']

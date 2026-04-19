@@ -57,9 +57,9 @@ async def lifespan(app: FastAPI):
 
     log.info("WikiMind gateway starting", port=settings.gateway_port, host=settings.server.host)
     if not settings.auth.enabled:
-        log.warning("SECURITY ALERT: Authentication is DISABLED. Ensure API is restricted to localhost.", 
+        log.warning("SECURITY ALERT: Authentication is DISABLED. Ensure API is restricted to localhost.",
                     host=settings.server.host)
-    
+
     await init_db()
     await _apply_db_preferences()
     log.info("Database initialized")

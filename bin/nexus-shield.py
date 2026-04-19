@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-import sys
-import re
 import json
-import subprocess
-from pathlib import Path
-from typing import List, Dict, Any, Tuple
-import structlog
+import re
+import sys
+from typing import Any
 
+import structlog
 
 # Setup logging
 structlog.configure(
@@ -55,7 +53,7 @@ class NexusShield:
                 r"transfer\.sh",
             ]
         }
-        
+
         # 2. PII Patterns
         self.pii_rules = {
             "EMAIL": r"[a-zA-Z0-9_\-\.]+@[a-zA-Z0-9_\-\.]+\.[a-zA-Z]{2,5}",
@@ -63,7 +61,7 @@ class NexusShield:
             "CREDIT_CARD": r"\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}"
         }
 
-    def scan(self, payload: str) -> Tuple[bool, str, List[Dict[str, Any]]]:
+    def scan(self, payload: str) -> tuple[bool, str, list[dict[str, Any]]]:
         findings = []
         safe = True
         reason = "Payload deemed safe."
@@ -80,11 +78,10 @@ class NexusShield:
                     finding = {"category": category, "pattern": pattern, "type": "LEXICAL"}
                     findings.append(finding)
                     reason = f"Critical violation in category {category}: {pattern}"
-                
+
                 # Then check normalized payload (stripped of spaces)
                 clean_pattern = "".join(pattern.split()).lower().replace("\\s+", "").replace(".*", "")
-                if clean_pattern and clean_pattern in norm_payload:
-                    if not any(f["pattern"] == pattern for f in findings):
+                if clean_pattern and clean_pattern in norm_payload and not any(f["pattern"] == pattern for f in findings):
                         safe = False
                         findings.append({"category": category, "pattern": pattern, "type": "BYPASS_ATTEMPT"})
                         reason = f"Security bypass attempt detected for: {pattern}"
@@ -127,7 +124,7 @@ def main():
             log.warning("potential_violation_triggering_vault", reason=reason)
             # This is a stub for the shell wrapper to handle the vault transition
             result["vault_required"] = True
-            
+
         log.error("shield_block", reason=reason, findings=findings)
 
         print(json.dumps(result, indent=2))

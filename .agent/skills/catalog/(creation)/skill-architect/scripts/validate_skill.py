@@ -286,7 +286,7 @@ def validate_skill(skill_path: str) -> dict:
 
     # --- Check 5: Parse frontmatter ---
     skill_path_full = os.path.join(skill_path, "SKILL.md")
-    with open(skill_path_full, "r", encoding="utf-8") as f:
+    with open(skill_path_full, encoding="utf-8") as f:
         content = f.read()
 
     # Check for --- delimiters
@@ -461,7 +461,7 @@ def validate_skill(skill_path: str) -> dict:
 def print_report(results: dict, verbose: bool = False):
     """Print a compact human-readable report."""
     print(f"\n{'=' * 60}")
-    print(f"  Skill Validation Report")
+    print("  Skill Validation Report")
     print(f"  Path: {results['path']}")
     print(f"  Parser: {results.get('parser_mode', 'unknown')}")
     print(f"{'=' * 60}\n")

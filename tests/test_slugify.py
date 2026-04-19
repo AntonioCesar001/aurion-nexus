@@ -1,5 +1,3 @@
-import sys
-from pathlib import Path
 
 # Add bin to sys.path to import the script
 # We need to handle the fact that nexus-memory-persist doesn't have a .py extension
@@ -8,7 +6,6 @@ from pathlib import Path
 
 def slugify(text: str) -> str:
     """Logical copy of the function in nexus-memory-persist for unit testing."""
-    import re
     # Simplified reproduction of the function
     return (
         text.lower()

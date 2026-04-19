@@ -9,8 +9,8 @@ Usage: python well_architected_review.py --services "Lambda,DynamoDB,API Gateway
 """
 
 import argparse
-import sys
 import json
+import sys
 
 PILLARS = {
     "operational_excellence": {
@@ -244,7 +244,7 @@ def detect_services(text: str) -> list:
         "NAT Gateway": ["nat gateway", "nat"],
         "EC2": ["ec2", "instance", "virtual machine"],
     }
-    
+
     text_lower = text.lower()
     detected = []
     for service, keywords in service_keywords.items():
@@ -252,29 +252,29 @@ def detect_services(text: str) -> list:
             detected.append(service)
     return detected if detected else ["general"]
 
-def generate_review(services: list, pillars: list = None) -> dict:
+def generate_review(services: list, pillars: list | None = None) -> dict:
     """Generate review questions for given services and pillars."""
     if pillars is None:
         pillars = list(PILLARS.keys())
-    
+
     review = {}
     for pillar_key in pillars:
         if pillar_key not in PILLARS:
             continue
         pillar = PILLARS[pillar_key]
         questions = []
-        
+
         # Always add general questions
         questions.extend(pillar["questions"].get("general", []))
-        
+
         # Add service-specific questions
         for service in services:
             service_questions = pillar["questions"].get(service, [])
             questions.extend(service_questions)
-        
+
         if questions:
             review[pillar["name"]] = questions
-    
+
     return review
 
 def main():
@@ -284,7 +284,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Include all pillars")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
-    
+
     # Get services from args or stdin
     if args.services:
         services = [s.strip() for s in args.services.split(",")]
@@ -293,7 +293,7 @@ def main():
         services = detect_services(text)
     else:
         services = ["general"]
-    
+
     # Get pillars
     if args.all:
         pillars = list(PILLARS.keys())
@@ -301,22 +301,22 @@ def main():
         pillars = [p.strip().lower().replace(" ", "_") for p in args.pillars.split(",")]
     else:
         pillars = ["security", "reliability", "cost"]  # Default to most critical
-    
+
     review = generate_review(services, pillars)
-    
+
     if args.json:
         print(json.dumps(review, indent=2))
     else:
         print(f"\n{'='*60}")
-        print(f"WELL-ARCHITECTED REVIEW")
+        print("WELL-ARCHITECTED REVIEW")
         print(f"Services: {', '.join(services)}")
         print(f"{'='*60}\n")
-        
+
         for pillar_name, questions in review.items():
             print(f"\n## {pillar_name}\n")
             for i, q in enumerate(questions, 1):
                 print(f"  {i}. {q}")
-        
+
         print(f"\n{'='*60}")
         print("Note: Search AWS documentation for detailed guidance on each question.")
         print(f"{'='*60}\n")
