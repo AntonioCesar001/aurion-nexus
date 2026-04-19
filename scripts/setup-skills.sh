@@ -11,7 +11,7 @@ AGENT_DIR="$PROJECT_ROOT/.agent"
 SKILLS_DIR="$AGENT_DIR/skills"
 AURORA_SOURCE_DIR="$AURION_ROOT/.agent/skills/aurora"
 AURION_SOURCE_DIR="$AURION_ROOT/.agent/skills/aurion"
-CLAUDE_SOURCE="$AURION_ROOT/.agent/templates/CLAUDE.md"
+CLAUDE_SOURCE="$AURION_ROOT/CLAUDE.md"
 
 safe_link() {
     local src="$1"

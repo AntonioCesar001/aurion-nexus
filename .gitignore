@@ -1,17 +1,11 @@
-# Claude Code local settings (machine-specific, no secrets but not shareable)
+# Claude Code local settings (machine-specific)
 .claude/
 
-# Secrets & Credentials
-secrets/
+# Credentials & Keys
 .env
 *.key
 *.pem
 token.json
-openclaw.json
-
-# Projects & Workspaces (User specific data)
-projects/
-temp_*/
 
 # System & OS
 .DS_Store
@@ -22,16 +16,11 @@ build/
 .npm/
 .yarn/
 
-# Antigravity Brain (Local Task Logs)
-.gemini/antigravity/brain/
-task.md
-implementation_plan.md
-walkthrough.md
-
 # Logs & Temp
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 .tmp/
 .agent/browser_profiles/
+.agent/logs/
+
+# Antigravity Brain (generated per-session, not shareable)
+.gemini/antigravity/brain/

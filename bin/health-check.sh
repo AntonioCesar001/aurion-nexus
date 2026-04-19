@@ -5,29 +5,18 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$DIR")"
 cd "$PROJECT_ROOT" || exit 1
 
+ERRORS=0
+
 echo -e "${BLUE}🌌 Starting Aurion Nexus Health Check...${NC}"
 
-# 1. Check Secrets
-echo -n "Checking secrets/ directory... "
-if [ -d "secrets" ]; then
-    ENV_COUNT=$(ls secrets/*.env 2>/dev/null | wc -l)
-    if [ "$ENV_COUNT" -gt 0 ]; then
-        echo -e "${GREEN}PASS (${ENV_COUNT} env files found)${NC}"
-    else
-        echo -e "${RED}FAIL (No .env files found in secrets/)${NC}"
-    fi
-else
-    echo -e "${RED}FAIL (Directory secrets/ not found)${NC}"
-fi
-
-# 2. Check Core Skills
-echo -n "Verifying Core Skills... "
+# 1. Check Governance Files
+echo -n "Checking governance files... "
 REQUIRED_FILES=("SOUL.md" "RULES.md" "CHRONICLE.md" "CLAUDE.md")
 MISSING=0
 for file in "${REQUIRED_FILES[@]}"; do
@@ -40,25 +29,45 @@ if [ "$MISSING" -eq 0 ]; then
     echo -e "${GREEN}PASS${NC}"
 else
     echo ""
+    ERRORS=$((ERRORS+MISSING))
 fi
 
-# 3. Check Skills Manifest
-echo -n "Checking Skills Manifest... "
+# 2. Check Skills Manifest
+echo -n "Checking skills manifest... "
 if [ -f ".agent/skills-manifest.md" ]; then
     echo -e "${GREEN}PASS${NC}"
 else
     echo -e "${RED}FAIL (.agent/skills-manifest.md not found)${NC}"
+    ERRORS=$((ERRORS+1))
 fi
 
-# 4. Check MCP Config (Placeholder for real connectivity check)
-echo -n "Checking MCP Infrastructure... "
-# In a real scenario, we would trigger an MCP tool to report status.
-# For now, we verify the presence of the manifest entry.
-grep -q "mcp-health" .agent/skills-manifest.md
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}READY (mcp-health registered)${NC}"
+# 3. Check Knowledge Catalogs
+echo -n "Checking knowledge catalogs... "
+CATALOG_COUNT=$(ls .agent/knowledge/*.md 2>/dev/null | wc -l | tr -d ' ')
+if [ "$CATALOG_COUNT" -gt 0 ]; then
+    echo -e "${GREEN}PASS (${CATALOG_COUNT} catalogs loaded)${NC}"
 else
-    echo -e "${RED}WARNING (mcp-health not registered)${NC}"
+    echo -e "${RED}FAIL (no catalogs in .agent/knowledge/)${NC}"
+    ERRORS=$((ERRORS+1))
 fi
 
-echo -e "${BLUE}--- Health Check Complete ---${NC}"
+# 4. Check Hooks
+echo -n "Checking agent hooks... "
+HOOK_COUNT=$(ls .agent/hooks/*.sh 2>/dev/null | wc -l | tr -d ' ')
+if [ "$HOOK_COUNT" -gt 0 ]; then
+    echo -e "${GREEN}PASS (${HOOK_COUNT} hooks registered)${NC}"
+else
+    echo -e "${RED}WARNING (no hooks in .agent/hooks/)${NC}"
+fi
+
+# 5. Check CLI binary
+echo -n "Checking aurion CLI... "
+if [ -x "$DIR/aurion" ]; then
+    echo -e "${GREEN}PASS${NC}"
+else
+    echo -e "${RED}FAIL (bin/aurion not executable)${NC}"
+    ERRORS=$((ERRORS+1))
+fi
+
+echo -e "${BLUE}--- Health Check Complete (${ERRORS} issues) ---${NC}"
+exit $ERRORS
