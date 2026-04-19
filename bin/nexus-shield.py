@@ -29,6 +29,12 @@ class NexusShield:
                 r"you are now a",
                 r"acting as a",
             ],
+            "ENGINEERING": [
+                r"race\s+condition|locking",
+                r"n\+1|select_related|prefetch_related",
+                r"import\s+time;.*sleep",
+                r"try:.*except\s+Exception\s+as\s+e:\s+pass",
+            ],
             "SHELL_EXPLOIT": [
                 r"rm\s+-rf\s+/",
                 r"cat\s+~/\.ssh",
